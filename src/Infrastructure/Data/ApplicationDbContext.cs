@@ -15,9 +15,56 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>, IApplica
 
     public DbSet<TodoItem> TodoItems => Set<TodoItem>();
 
+    public DbSet<Category> Categories => Set<Category>();
+    public DbSet<Location> Locations => Set<Location>();
+    public DbSet<Listing> Listings => Set<Listing>();
+    public DbSet<ListingImage> ListingImages => Set<ListingImage>();
+    public DbSet<ListingAmenity> ListingAmenities => Set<ListingAmenity>();
+    public DbSet<Booking> Bookings => Set<Booking>();
+    public DbSet<Payment> Payments => Set<Payment>();
+    public DbSet<BookingCancellation> BookingCancellations => Set<BookingCancellation>();
+    public DbSet<Review> Reviews => Set<Review>();
+    public DbSet<Conversation> Conversations => Set<Conversation>();
+    public DbSet<Message> Messages => Set<Message>();
+    public DbSet<Notification> Notifications => Set<Notification>();
+
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);
         builder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
+
+        // FIX LỖI MULTIPLE CASCADE PATHS: Tắt Cascade Delete của bảng Review
+        builder.Entity<Review>()
+            .HasOne(r => r.Booking)
+            .WithMany()
+            .HasForeignKey(r => r.BookingId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.Entity<Review>()
+            .HasOne(r => r.Listing)
+            .WithMany(l => l.Reviews)
+            .HasForeignKey(r => r.ListingId)
+            .OnDelete(DeleteBehavior.Cascade); // Cho phép Listing xóa Review nhưng cấm Booking
+
+        // Tương tự, Payment cũng dính vào Booking, tắt Cascade để an toàn
+        builder.Entity<Payment>()
+            .HasOne(p => p.Booking)
+            .WithOne(b => b.Payment)
+            .HasForeignKey<Payment>(p => p.BookingId)
+            .OnDelete(DeleteBehavior.Restrict);
+            
+        // Booking Cancellation cũng vậy
+        builder.Entity<BookingCancellation>()
+            .HasOne(c => c.Booking)
+            .WithOne(b => b.Cancellation)
+            .HasForeignKey<BookingCancellation>(c => c.BookingId)
+            .OnDelete(DeleteBehavior.Restrict);
+    }
+
+    // THÊM HÀM NÀY ĐỂ FIX WARNING CỦA KIỂU DECIMAL
+    protected override void ConfigureConventions(ModelConfigurationBuilder configurationBuilder)
+    {
+        // Áp dụng định dạng (18, 2) cho tât cả các properties kiểu decimal
+        configurationBuilder.Properties<decimal>().HavePrecision(18, 2);
     }
 }
