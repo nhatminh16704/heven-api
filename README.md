@@ -1,58 +1,54 @@
-﻿# Heven.Api
+﻿# Heven.Api - Room Rental Platform
 
-The project was generated using the [Clean.Architecture.Solution.Template](https://github.com/jasontaylordev/Heven.Api) version 8.0.6.
+**Heven.Api** is a modern, scalable backend application built for a property and room rental platform (inspired by Airbnb). Developed with **.NET 8** and adhering to **Clean Architecture** principles, this API serves as the core engine for handling property listings, user bookings, host management, and secure transactions.
 
-## Build
+## 🌟 Business Features (Platform Capabilities)
+- **Property Listings:** Hosts can create, update, and manage room/property listings with details, images, and pricing.
+- **Search & Filter:** Guests can discover properties based on location, availability, and specific amenities.
+- **Booking & Reservations:** Seamless booking engine handling availability checking, reservations, and cancellations.
+- **User Roles:** Distinct boundaries and workflows for Guests, Hosts, and Administrators.
+- **Reviews & Ratings:** System for guests to leave feedback on their stays.
 
-Run `dotnet build -tl` to build the solution.
+## 🚀 Technical Features
+- **Clean Architecture:** Clear separation between Domain, Application, Infrastructure, and Web layers.
+- **CQRS Pattern:** Efficient data querying and command processing using MediatR.
+- **Standardized API Responses:** A unified JSON response wrapper for all requests (Success, Data, Error) to easily integrate with Frontend or Mobile apps.
+- **Global Exception Handling:** Advanced and centralized error management using the latest .NET 8 `IExceptionHandler`.
+- **.NET 8 Minimal APIs:** High-performance, low-allocation routing.
+- **Entity Framework Core:** Strong data access layer integrated with SQL Server.
+- **Authentication & Authorization:** JWT-based security securing private endpoints and role-based actions.
 
-## Run
+## 🛠 Getting Started
 
-To run the web application:
+### Prerequisites
+- [.NET 8 SDK](https://dotnet.microsoft.com/download/dotnet/8.0)
+- Visual Studio 2022 (Current) or Visual Studio Code
+- SQL Server (LocalDB, Express, or Docker instance)
 
-```bash
-cd .\src\Web\
-dotnet watch run
-```
+### Setup & Build
+1. Clone the repository and navigate to the root directory.
+2. Build the solution to restore dependencies:
 
-Navigate to https://localhost:5001. The application will automatically reload if you change any of the source files.
+### Database Initialization
+On the first run in the `Development` environment, the application will automatically run Entity Framework migrations to construct the schema and seed initial data (e.g., default users or categories).
+Ensure your SQL connection string in `src/Web/appsettings.json` (or `appsettings.Development.json`) is correct.
 
-## Code Styles & Formatting
+### Run the Application
+Navigate to the Web project and start the server:
 
-The template includes [EditorConfig](https://editorconfig.org/) support to help maintain consistent coding styles for multiple developers working on the same project across various editors and IDEs. The **.editorconfig** file defines the coding styles applicable to this solution.
+Once started, explore the API definitions and test endpoints via Swagger UI:
+👉 **https://localhost:5001/api**
 
-## Code Scaffolding
+## 📂 Project Structure
+- **src/Domain:** Enterprise business rules, entities (e.g., `Property`, `Booking`, `User`), and value objects.
+- **src/Application:** Application logic, use cases (CQRS), MediatR handlers, DTOs, and interfaces.
+- **src/Infrastructure:** Database contexts, repositories, migrations, identity, and third-party services integration.
+- **src/Web:** Presentation layer containing the Minimal API endpoints, standard response filters, and middleware configurations.
 
-The template includes support to scaffold new commands and queries.
+## 🧪 Testing
+The solution contains a comprehensive suite of unit, integration, and functional tests to ensure the reliability of the booking flow and data integrity.
 
-Start in the `.\src\Application\` folder.
+To execute all tests:
 
-Create a new command:
-
-```
-dotnet new ca-usecase --name CreateTodoList --feature-name TodoLists --usecase-type command --return-type int
-```
-
-Create a new query:
-
-```
-dotnet new ca-usecase -n GetTodos -fn TodoLists -ut query -rt TodosVm
-```
-
-If you encounter the error *"No templates or subcommands found matching: 'ca-usecase'."*, install the template and try again:
-
-```bash
-dotnet new install Clean.Architecture.Solution.Template::8.0.6
-```
-
-## Test
-
-The solution contains unit, integration, and functional tests.
-
-To run the tests:
-```bash
-dotnet test
-```
-
-## Help
-To learn more about the template go to the [project website](https://github.com/jasontaylordev/CleanArchitecture). Here you can find additional guidance, request new features, report a bug, and discuss the template with other users.
+## 📝 Code Style & Formatting
+The project strictly follows coding conventions defined in the `.editorconfig` file. Ensure your IDE is configured to respect these rules before submitting any pull requests.
