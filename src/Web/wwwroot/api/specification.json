@@ -6,6 +6,38 @@
     "version": "1.0.0"
   },
   "paths": {
+    "/api/Listings/{id}": {
+      "get": {
+        "tags": [
+          "Listings"
+        ],
+        "operationId": "GetListingById",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "x-position": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ListingDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/TodoItems": {
       "get": {
         "tags": [
@@ -757,6 +789,44 @@
   },
   "components": {
     "schemas": {
+      "ListingDto": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "hostId": {
+            "type": "string",
+            "nullable": true
+          },
+          "title": {
+            "type": "string",
+            "nullable": true
+          },
+          "description": {
+            "type": "string",
+            "nullable": true
+          },
+          "pricePerNight": {
+            "type": "number",
+            "format": "decimal"
+          },
+          "maxGuests": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "bedrooms": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "status": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      },
       "PaginatedListOfTodoItemBriefDto": {
         "type": "object",
         "additionalProperties": false,

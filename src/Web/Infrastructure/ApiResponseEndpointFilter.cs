@@ -9,13 +9,12 @@ public class ApiResponseEndpointFilter : IEndpointFilter
     {
         var result = await next(context);
 
-        // Trường hợp API không trả về gì
         if (result is null)
         {
             return Results.Ok(ApiResponse<object>.Succeeded(null));
         }
 
-        // Bỏ qua nếu đã được bọc trong ApiResponse từ trước
+
         if (result.GetType().IsGenericType && result.GetType().GetGenericTypeDefinition() == typeof(ApiResponse<>))
         {
             return result;
