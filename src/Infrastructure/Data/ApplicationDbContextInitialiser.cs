@@ -105,5 +105,55 @@ public class ApplicationDbContextInitialiser
 
             await _context.SaveChangesAsync();
         }
+
+        if (!_context.Categories.Any())
+        {
+            _context.Categories.AddRange(
+                new Category { Name = "Nhà bên bờ biển", Icon = "beach", SortOrder = 1 },
+                new Category { Name = "Biệt thự hồ bơi", Icon = "pool", SortOrder = 2 },
+                new Category { Name = "Khu cắm trại", Icon = "camping", SortOrder = 3 }
+            );
+
+            await _context.SaveChangesAsync();
+        }
+
+        if (!_context.Locations.Any())
+        {
+            _context.Locations.AddRange(
+                new Location { Address = "Bãi Dài", City = "Cam Ranh", State = "Khánh Hòa", Country = "Việt Nam", Latitude = 12.062060, Longitude = 109.213210 },
+                new Location { Address = "Hồ Tuyền Lâm", City = "Đà Lạt", State = "Lâm Đồng", Country = "Việt Nam", Latitude = 11.905625, Longitude = 108.432658 }
+            );
+
+            await _context.SaveChangesAsync();
+        }
+
+        if (!_context.Listings.Any())
+        {
+            var category = await _context.Categories.FirstOrDefaultAsync();
+            var location = await _context.Locations.FirstOrDefaultAsync();
+
+            if (category != null && location != null && administrator != null)
+            {
+                _context.Listings.Add(new Listing
+                {
+                    HostId = administrator.Id,
+                    CategoryId = category.Id,
+                    LocationId = location.Id,
+                    Title = "Biệt thự sát biển nhìn ra biển lộng gió",
+                    Description = "Trải nghiệm kỳ nghỉ tuyệt vời cùng gia đình tại bờ biển nên thơ.",
+                    PricePerNight = 1200000,
+                    CleaningFee = 250000,
+                    MaxGuests = 6,
+                    Bedrooms = 3,
+                    Beds = 4,
+                    Bathrooms = 2,
+                    PropertyType = "Villa",
+                    InstantBook = true,
+                    Status = Heven.Api.Domain.Enums.ListingStatus.Active
+                });
+
+                await _context.SaveChangesAsync();
+            }
+        }
     }
 }

@@ -33,7 +33,7 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>, IApplica
         base.OnModelCreating(builder);
         builder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
 
-        // FIX LỖI MULTIPLE CASCADE PATHS: Tắt Cascade Delete của bảng Review
+
         builder.Entity<Review>()
             .HasOne(r => r.Booking)
             .WithMany()
@@ -46,14 +46,14 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>, IApplica
             .HasForeignKey(r => r.ListingId)
             .OnDelete(DeleteBehavior.Cascade); // Cho phép Listing xóa Review nhưng cấm Booking
 
-        // Tương tự, Payment cũng dính vào Booking, tắt Cascade để an toàn
+
         builder.Entity<Payment>()
             .HasOne(p => p.Booking)
             .WithOne(b => b.Payment)
             .HasForeignKey<Payment>(p => p.BookingId)
             .OnDelete(DeleteBehavior.Restrict);
             
-        // Booking Cancellation cũng vậy
+
         builder.Entity<BookingCancellation>()
             .HasOne(c => c.Booking)
             .WithOne(b => b.Cancellation)
@@ -61,7 +61,6 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>, IApplica
             .OnDelete(DeleteBehavior.Restrict);
     }
 
-    // THÊM HÀM NÀY ĐỂ FIX WARNING CỦA KIỂU DECIMAL
     protected override void ConfigureConventions(ModelConfigurationBuilder configurationBuilder)
     {
         // Áp dụng định dạng (18, 2) cho tât cả các properties kiểu decimal
