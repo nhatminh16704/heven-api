@@ -47,7 +47,7 @@ public partial class Testing
     public static string? GetUserId()
     {
         return _userId;
-    }
+    } 
 
     public static async Task<string> RunAsDefaultUserAsync()
     {
