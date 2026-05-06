@@ -1,4 +1,6 @@
-﻿using Heven.Api.Application.Common.Exceptions;
+﻿using AutoMapper;
+using AutoMapper.QueryableExtensions;
+using Heven.Api.Application.Common.Exceptions;
 using Heven.Api.Application.Common.Interfaces;
 using Heven.Api.Domain.Entities;
 using MediatR;
@@ -14,10 +16,12 @@ public record GetListingByIdQuery : IRequest<ListingDto>
 public class GetListingByIdQueryHandler : IRequestHandler<GetListingByIdQuery, ListingDto>
 {
     private readonly IApplicationDbContext _context;
+    private readonly IMapper _mapper;
 
-    public GetListingByIdQueryHandler(IApplicationDbContext context)
+    public GetListingByIdQueryHandler(IApplicationDbContext context, IMapper mapper)
     {
         _context = context;
+        _mapper = mapper;
     }
 
     public async Task<ListingDto> Handle(GetListingByIdQuery request, CancellationToken cancellationToken)
@@ -25,20 +29,9 @@ public class GetListingByIdQueryHandler : IRequestHandler<GetListingByIdQuery, L
         var listing = await _context.Listings
             .AsNoTracking()
             .Where(x => x.Id == request.Id)
-            .Select(x => new ListingDto
-            {
-                Id = x.Id,
-                HostId = x.HostId,
-                Title = x.Title,
-                Description = x.Description,
-                PricePerNight = x.PricePerNight,
-                MaxGuests = x.MaxGuests,
-                Bedrooms = x.Bedrooms,
-                Status = x.Status.ToString()
-            })
+            .ProjectTo<ListingDto>(_mapper.ConfigurationProvider)
             .FirstOrDefaultAsync(cancellationToken);
 
-        // Ném exception nếu không tìm thấy, Middleware sẽ lo việc trả về lỗi 404 cho Client
         if (listing == null)
         {
             throw new NotFoundException(nameof(Listing), request.Id.ToString());

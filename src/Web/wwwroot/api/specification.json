@@ -813,6 +813,10 @@
             "type": "number",
             "format": "decimal"
           },
+          "cleaningFee": {
+            "type": "number",
+            "format": "decimal"
+          },
           "maxGuests": {
             "type": "integer",
             "format": "int32"
@@ -821,9 +825,99 @@
             "type": "integer",
             "format": "int32"
           },
+          "beds": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "bathrooms": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "propertyType": {
+            "type": "string",
+            "nullable": true
+          },
+          "instantBook": {
+            "type": "boolean"
+          },
           "status": {
             "type": "string",
             "nullable": true
+          },
+          "ratingAverage": {
+            "type": "number",
+            "format": "double"
+          },
+          "reviewCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "category": {
+            "type": "string",
+            "nullable": true
+          },
+          "location": {
+            "nullable": true,
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/ListingLocationDto"
+              }
+            ]
+          },
+          "amenities": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "images": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ListingImageDto"
+            }
+          }
+        }
+      },
+      "ListingLocationDto": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "address": {
+            "type": "string",
+            "nullable": true
+          },
+          "city": {
+            "type": "string",
+            "nullable": true
+          },
+          "state": {
+            "type": "string",
+            "nullable": true
+          },
+          "country": {
+            "type": "string",
+            "nullable": true
+          },
+          "latitude": {
+            "type": "string",
+            "nullable": true
+          },
+          "longitude": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      },
+      "ListingImageDto": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "url": {
+            "type": "string",
+            "nullable": true
+          },
+          "isPrimary": {
+            "type": "boolean"
           }
         }
       },
