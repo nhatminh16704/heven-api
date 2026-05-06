@@ -4,17 +4,18 @@ namespace Heven.Api.Web.Infrastructure;
 
 public static class WebApplicationExtensions
 {
-        public static RouteGroupBuilder MapGroup(this WebApplication app, EndpointGroupBase group)
-        {
-            var groupName = group.GetType().Name;
+    public static RouteGroupBuilder MapGroup(this WebApplication app, EndpointGroupBase group)
+    {
+        var groupName = group.GetType().Name;
 
-            return app
-                .MapGroup($"/api/{groupName}")
-                .WithGroupName(groupName)
-                .WithTags(groupName)
-                .WithOpenApi()
-                .AddEndpointFilter<ApiResponseEndpointFilter>(); 
-        }
+        return app
+            // Sử dụng ToLowerInvariant() tại đây để chuyển route thành chữ thường
+            .MapGroup($"/api/{groupName.ToLowerInvariant()}")
+            .WithGroupName(groupName)
+            .WithTags(groupName)
+            .WithOpenApi()
+            .AddEndpointFilter<ApiResponseEndpointFilter>(); 
+    }
 
     public static WebApplication MapEndpoints(this WebApplication app)
     {

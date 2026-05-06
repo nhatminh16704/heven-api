@@ -6,7 +6,7 @@
     "version": "1.0.0"
   },
   "paths": {
-    "/api/Listings/{id}": {
+    "/api/listings/{id}": {
       "get": {
         "tags": [
           "Listings"
@@ -38,7 +38,7 @@
         }
       }
     },
-    "/api/TodoItems": {
+    "/api/todoitems": {
       "get": {
         "tags": [
           "TodoItems"
@@ -131,7 +131,7 @@
         ]
       }
     },
-    "/api/TodoItems/{id}": {
+    "/api/todoitems/{id}": {
       "put": {
         "tags": [
           "TodoItems"
@@ -201,7 +201,7 @@
         ]
       }
     },
-    "/api/TodoItems/UpdateDetail/{id}": {
+    "/api/todoitems/UpdateDetail/{id}": {
       "put": {
         "tags": [
           "TodoItems"
@@ -243,7 +243,7 @@
         ]
       }
     },
-    "/api/TodoLists": {
+    "/api/todolists": {
       "get": {
         "tags": [
           "TodoLists"
@@ -304,7 +304,7 @@
         ]
       }
     },
-    "/api/TodoLists/{id}": {
+    "/api/todolists/{id}": {
       "put": {
         "tags": [
           "TodoLists"
@@ -374,7 +374,7 @@
         ]
       }
     },
-    "/api/Users/register": {
+    "/api/users/register": {
       "post": {
         "tags": [
           "Users"
@@ -408,7 +408,7 @@
         }
       }
     },
-    "/api/Users/login": {
+    "/api/users/login": {
       "post": {
         "tags": [
           "Users"
@@ -459,7 +459,7 @@
         }
       }
     },
-    "/api/Users/refresh": {
+    "/api/users/refresh": {
       "post": {
         "tags": [
           "Users"
@@ -490,7 +490,7 @@
         }
       }
     },
-    "/api/Users/confirmEmail": {
+    "/api/users/confirmEmail": {
       "get": {
         "tags": [
           "Users"
@@ -532,7 +532,7 @@
         }
       }
     },
-    "/api/Users/resendConfirmationEmail": {
+    "/api/users/resendConfirmationEmail": {
       "post": {
         "tags": [
           "Users"
@@ -556,7 +556,7 @@
         }
       }
     },
-    "/api/Users/forgotPassword": {
+    "/api/users/forgotPassword": {
       "post": {
         "tags": [
           "Users"
@@ -590,7 +590,7 @@
         }
       }
     },
-    "/api/Users/resetPassword": {
+    "/api/users/resetPassword": {
       "post": {
         "tags": [
           "Users"
@@ -624,7 +624,7 @@
         }
       }
     },
-    "/api/Users/manage/2fa": {
+    "/api/users/manage/2fa": {
       "post": {
         "tags": [
           "Users"
@@ -673,7 +673,7 @@
         ]
       }
     },
-    "/api/Users/manage/info": {
+    "/api/users/manage/info": {
       "get": {
         "tags": [
           "Users"
@@ -758,7 +758,7 @@
         ]
       }
     },
-    "/api/WeatherForecasts": {
+    "/api/weatherforecasts": {
       "get": {
         "tags": [
           "WeatherForecasts"
