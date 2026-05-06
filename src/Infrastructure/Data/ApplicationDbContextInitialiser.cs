@@ -67,28 +67,48 @@ public class ApplicationDbContextInitialiser
 
     public async Task TrySeedAsync()
     {
-        // Default roles
-        var administratorRole = new IdentityRole(Roles.Administrator);
-
-        if (_roleManager.Roles.All(r => r.Name != administratorRole.Name))
+        // 1. Default roles
+        var roles = new[] { Roles.Administrator, Roles.Host, Roles.Guest };
+        
+        foreach (var roleName in roles)
         {
-            await _roleManager.CreateAsync(administratorRole);
-        }
+            var role = new IdentityRole(roleName);
 
-        // Default users
-        var administrator = new ApplicationUser { UserName = "administrator@localhost", Email = "administrator@localhost" };
-
-        if (_userManager.Users.All(u => u.UserName != administrator.UserName))
-        {
-            await _userManager.CreateAsync(administrator, "Administrator1!");
-            if (!string.IsNullOrWhiteSpace(administratorRole.Name))
+            if (_roleManager.Roles.All(r => r.Name != role.Name))
             {
-                await _userManager.AddToRolesAsync(administrator, new [] { administratorRole.Name });
+                await _roleManager.CreateAsync(role);
             }
         }
 
-        // Default data
-        // Seed, if necessary
+        // 2. Default users
+        // Admin
+        var administrator = await _userManager.FindByEmailAsync("administrator@localhost");
+        if (administrator == null)
+        {
+            administrator = new ApplicationUser { UserName = "administrator@localhost", Email = "administrator@localhost" };
+            await _userManager.CreateAsync(administrator, "Administrator1!");
+            await _userManager.AddToRolesAsync(administrator, new[] { Roles.Administrator });
+        }
+
+        // Host
+        var hostUser = await _userManager.FindByEmailAsync("host@localhost");
+        if (hostUser == null)
+        {
+            hostUser = new ApplicationUser { UserName = "host@localhost", Email = "host@localhost" };
+            await _userManager.CreateAsync(hostUser, "Host123456!");
+            await _userManager.AddToRolesAsync(hostUser, new[] { Roles.Host });
+        }
+
+        // Guest
+        var guestUser = await _userManager.FindByEmailAsync("guest@localhost");
+        if (guestUser == null)
+        {
+            guestUser = new ApplicationUser { UserName = "guest@localhost", Email = "guest@localhost" };
+            await _userManager.CreateAsync(guestUser, "Guest123456!");
+            await _userManager.AddToRolesAsync(guestUser, new[] { Roles.Guest });
+        }
+
+        // 3. Default data (Seed, if necessary)
         if (!_context.TodoLists.Any())
         {
             _context.TodoLists.Add(new TodoList
@@ -132,11 +152,12 @@ public class ApplicationDbContextInitialiser
             var category = await _context.Categories.FirstOrDefaultAsync();
             var location = await _context.Locations.FirstOrDefaultAsync();
 
-            if (category != null && location != null && administrator != null)
+            // Ràng buộc phải có Host User mới tạo Listing
+            if (category != null && location != null && hostUser != null)
             {
                 _context.Listings.Add(new Listing
                 {
-                    HostId = administrator.Id,
+                    HostId = hostUser.Id, // <-- Gắn bằng User mang Role Host
                     CategoryId = category.Id,
                     LocationId = location.Id,
                     Title = "Biệt thự sát biển nhìn ra biển lộng gió",

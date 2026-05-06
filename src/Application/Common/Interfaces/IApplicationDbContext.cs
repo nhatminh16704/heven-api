@@ -9,6 +9,7 @@ public interface IApplicationDbContext
     
     DbSet<Category> Categories { get; }
     DbSet<Location> Locations { get; }
+    DbSet<Amenity> Amenities { get; }
     DbSet<Listing> Listings { get; }
     DbSet<ListingImage> ListingImages { get; }
     DbSet<ListingAmenity> ListingAmenities { get; }

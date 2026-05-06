@@ -642,7 +642,7 @@ namespace Heven.Api.Infrastructure.Migrations
                 name: "BookingCancellations");
 
             migrationBuilder.DropTable(
-                name: "ListingAmenities");
+                name: "Listing  ");
 
             migrationBuilder.DropTable(
                 name: "ListingImages");

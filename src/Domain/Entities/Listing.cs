@@ -20,6 +20,8 @@ public class Listing : BaseAuditableEntity
     public string? PropertyType { get; set; }
     public bool InstantBook { get; set; }
     public ListingStatus Status { get; set; } = ListingStatus.Pending;
+    public double RatingAverage { get; set; } = 0;
+    public int ReviewCount { get; set; } = 0;
 
     // Navigation Domain Properties
     public Category Category { get; set; } = null!;
