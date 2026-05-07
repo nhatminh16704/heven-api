@@ -1,8 +1,9 @@
 ﻿using System.Text.Json;
-using Heven.Api.Application.Common.Interfaces;
 using MediatR;
 using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Logging;
+using Heven.Api.Application.Common.Caching;
+using Heven.Api.Application.Common.Caching.Keys;
 
 namespace Heven.Api.Application.Common.Behaviours;
 

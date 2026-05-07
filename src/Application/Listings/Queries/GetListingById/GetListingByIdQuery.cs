@@ -1,5 +1,7 @@
 ﻿using AutoMapper;
 using AutoMapper.QueryableExtensions;
+using Heven.Api.Application.Common.Caching;
+using Heven.Api.Application.Common.Caching.Keys;
 using Heven.Api.Application.Common.Exceptions;
 using Heven.Api.Application.Common.Interfaces;
 using Heven.Api.Domain.Entities;
@@ -11,7 +13,8 @@ namespace Heven.Api.Application.Listings.Queries.GetListingById;
 public record GetListingByIdQuery : IRequest<ListingDto>, ICacheable
 {
     public int Id { get; init; }
-    public string CacheKey => $"Listing_Details_{Id}";
+    
+    public string CacheKey => ListingCacheKeys.Details(Id);
     public TimeSpan? Expiration => TimeSpan.FromMinutes(15);
 }
 
