@@ -8,9 +8,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Heven.Api.Application.Listings.Queries.GetListingById;
 
-public record GetListingByIdQuery : IRequest<ListingDto>
+public record GetListingByIdQuery : IRequest<ListingDto>, ICacheable
 {
     public int Id { get; init; }
+    public string CacheKey => $"Listing_Details_{Id}";
+    public TimeSpan? Expiration => TimeSpan.FromMinutes(15);
 }
 
 public class GetListingByIdQueryHandler : IRequestHandler<GetListingByIdQuery, ListingDto>

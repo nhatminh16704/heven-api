@@ -29,6 +29,13 @@ public static class DependencyInjection
             options.UseSqlServer(connectionString);
         });
 
+        services.AddStackExchangeRedisCache(options =>
+        {
+            options.Configuration = configuration.GetConnectionString("RedisConnection");
+            options.InstanceName = "Heven_"; // Tiền tố cho các Key để dễ quản lý trong Redis
+        });
+
+
         services.AddScoped<IApplicationDbContext>(provider => provider.GetRequiredService<ApplicationDbContext>());
 
         services.AddScoped<ApplicationDbContextInitialiser>();
@@ -49,6 +56,8 @@ public static class DependencyInjection
 
         services.AddAuthorization(options =>
             options.AddPolicy(Policies.CanPurge, policy => policy.RequireRole(Roles.Administrator)));
+
+
 
         return services;
     }
