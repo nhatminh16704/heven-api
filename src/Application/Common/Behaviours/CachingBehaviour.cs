@@ -34,10 +34,23 @@ public class CachingBehaviour<TRequest, TResponse> : IPipelineBehavior<TRequest,
         var response = await next();
 
         // 3. Set dữ liệu xuống Cache cho lần sau
-        var cacheOptions = new DistributedCacheEntryOptions
+        var cacheOptions = new DistributedCacheEntryOptions();
+        
+        // Thiết lập Absolute Expiration
+        if (request.Expiration.HasValue)
         {
-            AbsoluteExpirationRelativeToNow = request.Expiration ?? TimeSpan.FromMinutes(15) // Mặc định 15 phút
-        };
+            cacheOptions.AbsoluteExpirationRelativeToNow = request.Expiration;
+        }
+        else
+        {
+            cacheOptions.AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(15); // Mặc định 15 phút
+        }
+
+        // Thiết lập Sliding Expiration nếu có
+        if (request.SlidingExpiration.HasValue) 
+        {
+            cacheOptions.SlidingExpiration = request.SlidingExpiration;
+        }
 
         var serializedData = JsonSerializer.Serialize(response);
         await _cache.SetStringAsync(request.CacheKey, serializedData, cacheOptions, cancellationToken);
