@@ -38,6 +38,31 @@
         }
       }
     },
+    "/api/listings": {
+      "post": {
+        "tags": [
+          "Listings"
+        ],
+        "operationId": "CreateListing",
+        "requestBody": {
+          "x-name": "command",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateListingCommand"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        }
+      }
+    },
     "/api/todoitems": {
       "get": {
         "tags": [
@@ -917,6 +942,61 @@
             "nullable": true
           },
           "isPrimary": {
+            "type": "boolean"
+          }
+        }
+      },
+      "CreateListingCommand": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "hostId": {
+            "type": "string"
+          },
+          "categoryId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "locationId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "title": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string",
+            "nullable": true
+          },
+          "pricePerNight": {
+            "type": "number",
+            "format": "decimal"
+          },
+          "cleaningFee": {
+            "type": "number",
+            "format": "decimal"
+          },
+          "maxGuests": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "bedrooms": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "beds": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "bathrooms": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "propertyType": {
+            "type": "string",
+            "nullable": true
+          },
+          "instantBook": {
             "type": "boolean"
           }
         }
