@@ -13,3 +13,4 @@ public class TodoItemConfiguration : IEntityTypeConfiguration<TodoItem>
             .IsRequired();
     }
 }
+    

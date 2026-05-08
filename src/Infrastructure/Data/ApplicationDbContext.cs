@@ -1,4 +1,4 @@
-﻿using System.Reflection;
+using System.Reflection;
 using Heven.Api.Application.Common.Interfaces;
 using Heven.Api.Domain.Entities;
 using Heven.Api.Infrastructure.Identity;
@@ -33,33 +33,6 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>, IApplica
     {
         base.OnModelCreating(builder);
         builder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
-
-
-        builder.Entity<Review>()
-            .HasOne(r => r.Booking)
-            .WithMany()
-            .HasForeignKey(r => r.BookingId)
-            .OnDelete(DeleteBehavior.Restrict);
-
-        builder.Entity<Review>()
-            .HasOne(r => r.Listing)
-            .WithMany(l => l.Reviews)
-            .HasForeignKey(r => r.ListingId)
-            .OnDelete(DeleteBehavior.Cascade); // Cho phép Listing xóa Review nhưng cấm Booking
-
-
-        builder.Entity<Payment>()
-            .HasOne(p => p.Booking)
-            .WithOne(b => b.Payment)
-            .HasForeignKey<Payment>(p => p.BookingId)
-            .OnDelete(DeleteBehavior.Restrict);
-            
-
-        builder.Entity<BookingCancellation>()
-            .HasOne(c => c.Booking)
-            .WithOne(b => b.Cancellation)
-            .HasForeignKey<BookingCancellation>(c => c.BookingId)
-            .OnDelete(DeleteBehavior.Restrict);
     }
 
     protected override void ConfigureConventions(ModelConfigurationBuilder configurationBuilder)
