@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using Heven.Api.Application.Common.Caching;
 using Heven.Api.Application.Common.Caching.Keys;
