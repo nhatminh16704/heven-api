@@ -1,4 +1,7 @@
-﻿using Heven.Api.Infrastructure.Data;
+using Heven.Api.Infrastructure.Data;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
+using System.Text.Json;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -17,7 +20,26 @@ if (app.Environment.IsDevelopment())
     await app.InitialiseDatabaseAsync();
 }
 
-app.UseHealthChecks("/health");
+app.MapHealthChecks("/health", new HealthCheckOptions
+{
+    ResponseWriter = async (context, report) =>
+    {
+        context.Response.ContentType = "application/json";
+        var result = JsonSerializer.Serialize(new
+        {
+            status = report.Status.ToString(),
+            duration = report.TotalDuration.TotalMilliseconds,
+            checks = report.Entries.Select(e => new
+            {
+                name = e.Key,
+                status = e.Value.Status.ToString(),
+                duration = e.Value.Duration.TotalMilliseconds,
+                description = e.Value.Exception?.Message ?? e.Value.Description
+            })
+        });
+        await context.Response.WriteAsync(result);
+    }
+});
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 

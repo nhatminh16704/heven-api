@@ -1,4 +1,4 @@
-﻿using Azure.Identity;
+using Azure.Identity;
 using Heven.Api.Application.Common.Interfaces;
 using Heven.Api.Infrastructure.Data;
 using Heven.Api.Web.Services;
@@ -20,7 +20,7 @@ public static class DependencyInjection
         services.AddHttpContextAccessor();
 
         services.AddHealthChecks()
-            .AddDbContextCheck<ApplicationDbContext>();
+            .AddDbContextCheck<ApplicationDbContext>(name: "sqlserver");
 
         services.AddExceptionHandler<CustomExceptionHandler>();
 

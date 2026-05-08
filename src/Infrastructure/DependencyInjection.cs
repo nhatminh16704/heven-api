@@ -1,4 +1,4 @@
-﻿using Heven.Api.Application.Common.Interfaces;
+using Heven.Api.Application.Common.Interfaces;
 using Heven.Api.Domain.Constants;
 using Heven.Api.Infrastructure.Data;
 using Heven.Api.Infrastructure.Data.Interceptors;
@@ -24,8 +24,6 @@ public static class DependencyInjection
         services.AddDbContext<ApplicationDbContext>((sp, options) =>
         {
             options.AddInterceptors(sp.GetServices<ISaveChangesInterceptor>());
-
-            // Trở lại sử dụng SQL Server
             options.UseSqlServer(connectionString);
         });
 
@@ -34,6 +32,12 @@ public static class DependencyInjection
             options.Configuration = configuration.GetConnectionString("RedisConnection");
             options.InstanceName = "Heven_"; // Tiền tố cho các Key để dễ quản lý trong Redis
         });
+
+        services.AddHealthChecks()
+            .AddRedis(
+                configuration.GetConnectionString("RedisConnection")!,
+                name: "redis",
+                tags: ["cache"]);
 
 
         services.AddScoped<IApplicationDbContext>(provider => provider.GetRequiredService<ApplicationDbContext>());
