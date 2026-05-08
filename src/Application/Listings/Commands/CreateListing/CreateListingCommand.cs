@@ -9,7 +9,6 @@ public record CreateListingCommand : IRequest<int>
 {
     public required string HostId { get; init; }
     public int CategoryId { get; init; }
-    public int LocationId { get; init; }
 
     public required string Title { get; init; }
     public string? Description { get; init; }
@@ -22,11 +21,47 @@ public record CreateListingCommand : IRequest<int>
     public string? PropertyType { get; init; }
     public bool InstantBook { get; init; }
 
+    public required CreateListingLocationDto Location { get; init; }
+    public IReadOnlyCollection<int> AmenityIds { get; init; } = Array.Empty<int>();
+    public IReadOnlyCollection<CreateListingImageDto> Images { get; init; } = Array.Empty<CreateListingImageDto>();
+
     private class Mapping : Profile
     {
         public Mapping()
         {
-            CreateMap<CreateListingCommand, Listing>();
+            CreateMap<CreateListingCommand, Listing>()
+                .ForMember(d => d.Amenities, opt => opt.MapFrom(s => s. AmenityIds.Select(id => new ListingAmenity { AmenityId = id })));
+        }
+    }
+}
+
+public class CreateListingLocationDto
+{
+    public required string Address { get; init; }
+    public int CityId { get; init; }
+    public double Latitude { get; init; }
+    public double Longitude { get; init; }
+
+    private class Mapping : Profile
+    {
+        public Mapping()
+        {
+            CreateMap<CreateListingLocationDto, Location>();
+        }
+    }
+}
+
+public class CreateListingImageDto
+{
+    public required string Url { get; init; }
+    public bool IsPrimary { get; init; }
+    public int SortOrder { get; init; }
+
+    private class Mapping : Profile
+    {
+        public Mapping()
+        {
+            CreateMap<CreateListingImageDto, ListingImage>();
         }
     }
 }

@@ -924,12 +924,12 @@
             "nullable": true
           },
           "latitude": {
-            "type": "string",
-            "nullable": true
+            "type": "number",
+            "format": "double"
           },
           "longitude": {
-            "type": "string",
-            "nullable": true
+            "type": "number",
+            "format": "double"
           }
         }
       },
@@ -954,10 +954,6 @@
             "type": "string"
           },
           "categoryId": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "locationId": {
             "type": "integer",
             "format": "int32"
           },
@@ -998,6 +994,59 @@
           },
           "instantBook": {
             "type": "boolean"
+          },
+          "location": {
+            "$ref": "#/components/schemas/CreateListingLocationDto"
+          },
+          "amenityIds": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          "images": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CreateListingImageDto"
+            }
+          }
+        }
+      },
+      "CreateListingLocationDto": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "address": {
+            "type": "string"
+          },
+          "cityId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "latitude": {
+            "type": "number",
+            "format": "double"
+          },
+          "longitude": {
+            "type": "number",
+            "format": "double"
+          }
+        }
+      },
+      "CreateListingImageDto": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "url": {
+            "type": "string"
+          },
+          "isPrimary": {
+            "type": "boolean"
+          },
+          "sortOrder": {
+            "type": "integer",
+            "format": "int32"
           }
         }
       },

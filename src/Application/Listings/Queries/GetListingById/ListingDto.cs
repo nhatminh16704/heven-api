@@ -53,14 +53,17 @@ public class ListingLocationDto
     public string? City { get; init; }
     public string? State { get; init; }
     public string? Country { get; init; }
-    public string? Latitude { get; init; }
-    public string? Longitude { get; init; }
+    public double Latitude { get; init; }
+    public double Longitude { get; init; }
 
     private class Mapping : Profile
     {
         public Mapping()
         {
-            CreateMap<Location, ListingLocationDto>();
+            CreateMap<Location, ListingLocationDto>()
+                .ForMember(d => d.City, opt => opt.MapFrom(s => s.City.Name))
+                .ForMember(d => d.State, opt => opt.MapFrom(s => s.City.State.Name))
+                .ForMember(d => d.Country, opt => opt.MapFrom(s => s.City.State.Country.Name));
         }
     }
 }
