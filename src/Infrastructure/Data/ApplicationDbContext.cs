@@ -16,6 +16,9 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>, IApplica
     public DbSet<TodoItem> TodoItems => Set<TodoItem>();
 
     public DbSet<Category> Categories => Set<Category>();
+    public DbSet<Country> Countries => Set<Country>();
+    public DbSet<State> States => Set<State>();
+    public DbSet<City> Cities => Set<City>();
     public DbSet<Location> Locations => Set<Location>();
     public DbSet<Amenity> Amenities => Set<Amenity>();
     public DbSet<Listing> Listings => Set<Listing>();

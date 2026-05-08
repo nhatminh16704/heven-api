@@ -1,4 +1,4 @@
-﻿using System.Runtime.InteropServices;
+using System.Runtime.InteropServices;
 using Heven.Api.Domain.Constants;
 using Heven.Api.Domain.Entities;
 using Heven.Api.Infrastructure.Identity;
@@ -137,14 +137,126 @@ public class ApplicationDbContextInitialiser
         }
 
         // Tạo Vị trí
-        if (!_context.Locations.Any())
+        if (!_context.Countries.Any())
         {
+            // ── Countries ──────────────────────────────────────────────
+            var us = new Country { Name = "United States", Code = "US" };
+            var fr = new Country { Name = "France",        Code = "FR" };
+            var it = new Country { Name = "Italy",         Code = "IT" };
+            var es = new Country { Name = "Spain",         Code = "ES" };
+            var de = new Country { Name = "Germany",       Code = "DE" };
+            var gb = new Country { Name = "United Kingdom",Code = "GB" };
+            var vn = new Country { Name = "Việt Nam",      Code = "VN" };
+            _context.Countries.AddRange(us, fr, it, es, de, gb, vn);
+            await _context.SaveChangesAsync();
+
+            // ── States ─────────────────────────────────────────────────
+            // US
+            var california = new State { Name = "California",  CountryId = us.Id };
+            var newYork    = new State { Name = "New York",     CountryId = us.Id };
+            var florida    = new State { Name = "Florida",      CountryId = us.Id };
+            var hawaii     = new State { Name = "Hawaii",       CountryId = us.Id };
+            // France
+            var ileDeFrance  = new State { Name = "Île-de-France",              CountryId = fr.Id };
+            var paca         = new State { Name = "Provence-Alpes-Côte d'Azur", CountryId = fr.Id };
+            // Italy
+            var lazio    = new State { Name = "Lazio",   CountryId = it.Id };
+            var tuscany  = new State { Name = "Tuscany", CountryId = it.Id };
+            var lombardy = new State { Name = "Lombardy",CountryId = it.Id };
+            // Spain
+            var catalonia = new State { Name = "Catalonia",           CountryId = es.Id };
+            var madrid    = new State { Name = "Community of Madrid",  CountryId = es.Id };
+            // Germany
+            var berlin  = new State { Name = "Berlin",  CountryId = de.Id };
+            var bavaria = new State { Name = "Bavaria", CountryId = de.Id };
+            // UK
+            var england  = new State { Name = "England",  CountryId = gb.Id };
+            var scotland = new State { Name = "Scotland", CountryId = gb.Id };
+            // Vietnam
+            var khanhHoa = new State { Name = "Khánh Hòa", CountryId = vn.Id };
+            var lamDong  = new State { Name = "Lâm Đồng",  CountryId = vn.Id };
+
+            _context.States.AddRange(
+                california, newYork, florida, hawaii,
+                ileDeFrance, paca,
+                lazio, tuscany, lombardy,
+                catalonia, madrid,
+                berlin, bavaria,
+                england, scotland,
+                khanhHoa, lamDong);
+            await _context.SaveChangesAsync();
+
+            // ── Cities ─────────────────────────────────────────────────
+            // US
+            var losAngeles   = new City { Name = "Los Angeles",   StateId = california.Id };
+            var sanFrancisco = new City { Name = "San Francisco",  StateId = california.Id };
+            var newYorkCity  = new City { Name = "New York City",  StateId = newYork.Id };
+            var miami        = new City { Name = "Miami",          StateId = florida.Id };
+            var honolulu     = new City { Name = "Honolulu",       StateId = hawaii.Id };
+            // France
+            var paris  = new City { Name = "Paris", StateId = ileDeFrance.Id };
+            var nice   = new City { Name = "Nice",  StateId = paca.Id };
+            var cannes = new City { Name = "Cannes",StateId = paca.Id };
+            // Italy
+            var rome     = new City { Name = "Rome",     StateId = lazio.Id };
+            var florence = new City { Name = "Florence", StateId = tuscany.Id };
+            var milan    = new City { Name = "Milan",    StateId = lombardy.Id };
+            // Spain
+            var barcelona  = new City { Name = "Barcelona", StateId = catalonia.Id };
+            var madridCity = new City { Name = "Madrid",    StateId = madrid.Id };
+            // Germany
+            var berlinCity = new City { Name = "Berlin", StateId = berlin.Id };
+            var munich     = new City { Name = "Munich", StateId = bavaria.Id };
+            // UK
+            var london    = new City { Name = "London",    StateId = england.Id };
+            var edinburgh = new City { Name = "Edinburgh", StateId = scotland.Id };
+            // Vietnam
+            var camRanh = new City { Name = "Cam Ranh", StateId = khanhHoa.Id };
+            var daLat   = new City { Name = "Đà Lạt",   StateId = lamDong.Id };
+
+            _context.Cities.AddRange(
+                losAngeles, sanFrancisco, newYorkCity, miami, honolulu,
+                paris, nice, cannes,
+                rome, florence, milan,
+                barcelona, madridCity,
+                berlinCity, munich,
+                london, edinburgh,
+                camRanh, daLat);
+            await _context.SaveChangesAsync();
+
+            // ── Locations ──────────────────────────────────────────────
             _context.Locations.AddRange(
-                new Location { Address = "Bãi Dài", City = "Cam Ranh", State = "Khánh Hòa", Country = "Việt Nam", Latitude = 12.062060, Longitude = 109.213210 },
-                new Location { Address = "Hồ Tuyền Lâm", City = "Đà Lạt", State = "Lâm Đồng", Country = "Việt Nam", Latitude = 11.905625, Longitude = 108.432658 }
+                // US
+                new Location { Address = "123 Sunset Blvd",          CityId = losAngeles.Id,   Latitude = 34.052235,  Longitude = -118.243683 },
+                new Location { Address = "1 Ferry Building",          CityId = sanFrancisco.Id, Latitude = 37.795490,  Longitude = -122.393590 },
+                new Location { Address = "350 5th Ave",               CityId = newYorkCity.Id,  Latitude = 40.748817,  Longitude = -73.985428  },
+                new Location { Address = "1 Ocean Drive",             CityId = miami.Id,        Latitude = 25.774200,  Longitude = -80.132700  },
+                new Location { Address = "2525 Kalakaua Ave",         CityId = honolulu.Id,     Latitude = 21.276440,  Longitude = -157.826180 },
+                // France
+                new Location { Address = "5 Avenue Anatole France",   CityId = paris.Id,        Latitude = 48.858370,  Longitude = 2.294481    },
+                new Location { Address = "3 Promenade des Anglais",   CityId = nice.Id,         Latitude = 43.695990,  Longitude = 7.266070    },
+                new Location { Address = "1 Bd de la Croisette",      CityId = cannes.Id,       Latitude = 43.551390,  Longitude = 7.017370    },
+                // Italy
+                new Location { Address = "Piazza del Colosseo 1",     CityId = rome.Id,         Latitude = 41.890251,  Longitude = 12.492373   },
+                new Location { Address = "Piazza del Duomo",          CityId = florence.Id,     Latitude = 43.773080,  Longitude = 11.255840   },
+                new Location { Address = "Piazza del Duomo, Milano",  CityId = milan.Id,        Latitude = 45.464210,  Longitude = 9.191630    },
+                // Spain
+                new Location { Address = "La Rambla 1",               CityId = barcelona.Id,    Latitude = 41.380900,  Longitude = 2.173400    },
+                new Location { Address = "Puerta del Sol 1",          CityId = madridCity.Id,   Latitude = 40.416900,  Longitude = -3.703800   },
+                // Germany
+                new Location { Address = "Unter den Linden 1",        CityId = berlinCity.Id,   Latitude = 52.516270,  Longitude = 13.377220   },
+                new Location { Address = "Marienplatz 1",             CityId = munich.Id,       Latitude = 48.137150,  Longitude = 11.575500   },
+                // UK
+                new Location { Address = "Westminster Bridge Rd",     CityId = london.Id,       Latitude = 51.500729,  Longitude = -0.124625   },
+                new Location { Address = "1 Royal Mile",              CityId = edinburgh.Id,    Latitude = 55.948990,  Longitude = -3.199790   },
+                // Vietnam
+                new Location { Address = "Bãi Dài",                   CityId = camRanh.Id,      Latitude = 12.062060,  Longitude = 109.213210  },
+                new Location { Address = "Hồ Tuyền Lâm",              CityId = daLat.Id,        Latitude = 11.905625,  Longitude = 108.432658  }
             );
             await _context.SaveChangesAsync();
         }
+
+
 
         // Tạo Các Tiện ích (Amenities)
         if (!_context.Amenities.Any())

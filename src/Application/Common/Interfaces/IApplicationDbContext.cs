@@ -1,4 +1,4 @@
-﻿using Heven.Api.Domain.Entities;
+using Heven.Api.Domain.Entities;
 
 namespace Heven.Api.Application.Common.Interfaces;
 
@@ -8,6 +8,9 @@ public interface IApplicationDbContext
     DbSet<TodoItem> TodoItems { get; }
     
     DbSet<Category> Categories { get; }
+    DbSet<Country> Countries { get; }
+    DbSet<State> States { get; }
+    DbSet<City> Cities { get; }
     DbSet<Location> Locations { get; }
     DbSet<Amenity> Amenities { get; }
     DbSet<Listing> Listings { get; }

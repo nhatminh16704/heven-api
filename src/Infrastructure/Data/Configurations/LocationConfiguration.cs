@@ -12,16 +12,11 @@ public class LocationConfiguration : IEntityTypeConfiguration<Location>
             .HasMaxLength(300)
             .IsRequired();
 
-        builder.Property(x => x.City)
-            .HasMaxLength(100)
-            .IsRequired();
+        builder.HasOne(x => x.City)
+            .WithMany(x => x.Locations)
+            .HasForeignKey(x => x.CityId)
+            .OnDelete(DeleteBehavior.Restrict);
 
-        builder.Property(x => x.State)
-            .HasMaxLength(100)
-            .IsRequired();
-
-        builder.Property(x => x.Country)
-            .HasMaxLength(100)
-            .IsRequired();
+        builder.HasIndex(x => x.CityId);
     }
 }
