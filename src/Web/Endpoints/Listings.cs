@@ -1,4 +1,5 @@
 using Heven.Api.Application.Listings.Commands.CreateListing;
+using Heven.Api.Application.Listings.Commands.UpdateListing;
 using Heven.Api.Application.Listings.Queries.GetListingById;
 using Heven.Api.Web.Infrastructure;
 using MediatR;
@@ -11,7 +12,8 @@ public class Listings : EndpointGroupBase
     {
         app.MapGroup(this)
             .MapGet(GetListingById, "{id}")
-            .MapPost(CreateListing);
+            .MapPost(CreateListing)
+            .MapPut(UpdateListing, "{id}");
     }
 
     public async Task<ListingDto> GetListingById(ISender sender, int id)
@@ -23,5 +25,12 @@ public class Listings : EndpointGroupBase
     {
         var id = await sender.Send(command);
         return Results.CreatedAtRoute(nameof(GetListingById), new { id }, id);
+    }
+
+    public async Task<IResult> UpdateListing(ISender sender, int id, UpdateListingCommand command)
+    {
+        if (id != command.Id) return Results.BadRequest();
+        await sender.Send(command);
+        return Results.NoContent();
     }
 }

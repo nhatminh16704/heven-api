@@ -1,4 +1,4 @@
-﻿using Heven.Api.Application.Common.Models;
+using Heven.Api.Application.Common.Models;
 using Microsoft.AspNetCore.Http;
 
 namespace Heven.Api.Web.Infrastructure;
@@ -50,6 +50,10 @@ public class ApiResponseEndpointFilter : IEndpointFilter
         // Bọc thành công (Status code 2xx)
         if (statusCode >= 200 && statusCode < 300)
         {
+            if (statusCode == StatusCodes.Status204NoContent)
+            {
+                return result; // Tránh lỗi InvalidOperationException (204 không được phép có body)
+            }            
             var response = ApiResponse<object>.Succeeded(data);
             return Results.Json(response, statusCode: statusCode);
         }
