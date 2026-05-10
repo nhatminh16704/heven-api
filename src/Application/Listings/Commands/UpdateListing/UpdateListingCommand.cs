@@ -4,6 +4,7 @@ using Heven.Api.Application.Common.Interfaces;
 using Heven.Api.Domain.Entities;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using Heven.Api.Domain.Events;
 
 namespace Heven.Api.Application.Listings.Commands.UpdateListing;
 
@@ -110,6 +111,8 @@ public class UpdateListingCommandHandler : IRequestHandler<UpdateListingCommand>
         {
             entity.Amenities.Add(new ListingAmenity { AmenityId = newId });
         }
+
+        entity.AddDomainEvent(new ListingUpdatedEvent(entity));
 
         await _context.SaveChangesAsync(cancellationToken);
     }
