@@ -6,6 +6,71 @@
     "version": "1.0.0"
   },
   "paths": {
+    "/api/listings": {
+      "get": {
+        "tags": [
+          "Listings"
+        ],
+        "operationId": "GetListingsWithPagination",
+        "parameters": [
+          {
+            "name": "PageNumber",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "x-position": 1
+          },
+          {
+            "name": "PageSize",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "x-position": 2
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaginatedListOfListingBriefDto"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Listings"
+        ],
+        "operationId": "CreateListing",
+        "requestBody": {
+          "x-name": "command",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateListingCommand"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        }
+      }
+    },
     "/api/listings/{id}": {
       "get": {
         "tags": [
@@ -65,31 +130,6 @@
           },
           "required": true,
           "x-position": 2
-        },
-        "responses": {
-          "200": {
-            "description": ""
-          }
-        }
-      }
-    },
-    "/api/listings": {
-      "post": {
-        "tags": [
-          "Listings"
-        ],
-        "operationId": "CreateListing",
-        "requestBody": {
-          "x-name": "command",
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/CreateListingCommand"
-              }
-            }
-          },
-          "required": true,
-          "x-position": 1
         },
         "responses": {
           "200": {
@@ -849,6 +889,78 @@
   },
   "components": {
     "schemas": {
+      "PaginatedListOfListingBriefDto": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ListingBriefDto"
+            }
+          },
+          "pageNumber": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "totalPages": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "totalCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "hasPreviousPage": {
+            "type": "boolean"
+          },
+          "hasNextPage": {
+            "type": "boolean"
+          }
+        }
+      },
+      "ListingBriefDto": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "title": {
+            "type": "string",
+            "nullable": true
+          },
+          "propertyType": {
+            "type": "string",
+            "nullable": true
+          },
+          "city": {
+            "type": "string",
+            "nullable": true
+          },
+          "country": {
+            "type": "string",
+            "nullable": true
+          },
+          "pricePerNight": {
+            "type": "number",
+            "format": "decimal"
+          },
+          "ratingAverage": {
+            "type": "number",
+            "format": "double"
+          },
+          "reviewCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "thumbnailUrl": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      },
       "ListingDto": {
         "type": "object",
         "additionalProperties": false,

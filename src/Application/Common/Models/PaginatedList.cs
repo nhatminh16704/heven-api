@@ -1,17 +1,26 @@
-﻿namespace Heven.Api.Application.Common.Models;
+﻿using System.Text.Json.Serialization;
+
+namespace Heven.Api.Application.Common.Models;
 
 public class PaginatedList<T>
 {
-    public IReadOnlyCollection<T> Items { get; }
-    public int PageNumber { get; }
-    public int TotalPages { get; }
-    public int TotalCount { get; }
+    public IReadOnlyCollection<T> Items { get; init; }
+    public int PageNumber { get; init; }
+    public int TotalPages { get; init; }
+    public int TotalCount { get; init; }
 
-    public PaginatedList(IReadOnlyCollection<T> items, int count, int pageNumber, int pageSize)
+    // Thêm Constructor này để System.Text.Json sử dụng khi Deserialize
+    [JsonConstructor]
+    public PaginatedList()
+    {
+        Items = Array.Empty<T>();
+    }
+
+    public PaginatedList(IReadOnlyCollection<T> items, int totalCount, int pageNumber, int pageSize)
     {
         PageNumber = pageNumber;
-        TotalPages = (int)Math.Ceiling(count / (double)pageSize);
-        TotalCount = count;
+        TotalPages = (int)Math.Ceiling(totalCount / (double)pageSize);
+        TotalCount = totalCount;
         Items = items;
     }
 
