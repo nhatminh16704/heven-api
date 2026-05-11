@@ -985,9 +985,6 @@
         "type": "object",
         "additionalProperties": false,
         "properties": {
-          "hostId": {
-            "type": "string"
-          },
           "categoryId": {
             "type": "integer",
             "format": "int32"

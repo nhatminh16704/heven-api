@@ -1,13 +1,16 @@
 using AutoMapper;
 using Heven.Api.Application.Common.Exceptions;
 using Heven.Api.Application.Common.Interfaces;
+using Heven.Api.Application.Common.Security;
 using Heven.Api.Domain.Entities;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Heven.Api.Domain.Events;
 
+
 namespace Heven.Api.Application.Listings.Commands.UpdateListing;
 
+[Authorize(Roles = "Host,Administrator")]
 public record UpdateListingCommand : IRequest
 {
     public int Id { get; init; }

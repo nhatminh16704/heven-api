@@ -124,4 +124,31 @@ Khai báo `INotification` tương ứng trong `Application/<Feature>/Events/`, p
 
 ---
 
+## 6. Security & Phân Quyền (Authorization)
+
+**Vị trí:** `src/Application/Common/Security/` và trực tiếp trên các `Command`/`Query`.
+
+### 6.1. Không truyền `UserId` hay `HostId` từ Request Payload
+Tuyệt đối **không** khai báo các property như `HostId`, `UserId`, hoặc `CreatedBy` trong model `Command` để client truyền lên. Việc này rất nguy hiểm vì user A có thể truyền ID của user B để thao tác dữ liệu trái phép.
+👉 **Giải pháp chuẩn:** Bỏ hoàn toàn trường ID này khỏi payload. Inject interface `IUser` vào trong `CommandHandler` và gán ID ở bước xử lý. Dữ liệu này được trích xuất an toàn 100% từ JWT Token.
+```csharp
+// Trong CommandHandler
+var listing = _mapper.Map<Listing>(request);
+listing.HostId = _user.Id!; // Lấy an toàn từ Token
+```
+
+### 6.2. Phân Quyền (Role-based Authorization)
+Nếu một chức năng (API) yêu cầu người dùng phải đăng nhập hoặc phải có Role cụ thể (như Host, Admin...):
+1. Import `using Heven.Api.Application.Common.Security;`.
+2. Gắn attribute `[Authorize]` trên đầu khai báo class `Command` hoặc `Query`.
+3. Có thể yêu cầu Role cụ thể bằng cách dùng thuộc tính `Roles` (ngăn cách bằng dấu phẩy).
+
+```csharp
+[Authorize(Roles = "Host,Administrator")]
+public record CreateListingCommand : IRequest<int> { ... }
+```
+💡 *Hệ thống Pipeline (`AuthorizationBehaviour`) sẽ tự động đánh chặn và văng lỗi 401 Unauthorized hoặc 403 Forbidden nếu request không đạt chuẩn, bạn không cần phải tự viết code check phân quyền rườm rà ở trong Handler!*
+
+---
+
 **Luôn nhớ:** Dependency Injection chỉ chảy 1 chiều từ ngoài vào trong: `Web` -> `Infrastructure` -> `Application` -> `Domain`. Đừng reference chéo nhau làm gãy code!

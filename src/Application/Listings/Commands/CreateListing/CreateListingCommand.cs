@@ -1,13 +1,14 @@
 using AutoMapper;
 using Heven.Api.Application.Common.Interfaces;
+using Heven.Api.Application.Common.Security;
 using Heven.Api.Domain.Entities;
 using MediatR;
 
 namespace Heven.Api.Application.Listings.Commands.CreateListing;
 
+[Authorize(Roles = "Host,Administrator")]
 public record CreateListingCommand : IRequest<int>
 {
-    public required string HostId { get; init; }
     public int CategoryId { get; init; }
 
     public required string Title { get; init; }
@@ -30,6 +31,7 @@ public record CreateListingCommand : IRequest<int>
         public Mapping()
         {
             CreateMap<CreateListingCommand, Listing>()
+                .ForMember(d => d.HostId, opt => opt.Ignore())
                 .ForMember(d => d.Amenities, opt => opt.MapFrom(s => s. AmenityIds.Select(id => new ListingAmenity { AmenityId = id })));
         }
     }
@@ -70,16 +72,19 @@ public class CreateListingCommandHandler : IRequestHandler<CreateListingCommand,
 { 
     private readonly IApplicationDbContext _context;
     private readonly IMapper _mapper;
+    private readonly IUser _user;
 
-    public CreateListingCommandHandler(IApplicationDbContext context, IMapper mapper)
+    public CreateListingCommandHandler(IApplicationDbContext context, IMapper mapper, IUser user)
     {
         _context = context;
         _mapper = mapper;
+        _user = user;
     }
 
     public async Task<int> Handle(CreateListingCommand request, CancellationToken cancellationToken)
     {
         var listing = _mapper.Map<Listing>(request);
+        listing.HostId = _user.Id!;
 
         _context.Listings.Add(listing);
         await _context.SaveChangesAsync(cancellationToken);

@@ -6,9 +6,6 @@ public class CreateListingCommandValidator : AbstractValidator<CreateListingComm
 {
     public CreateListingCommandValidator()
     {
-        RuleFor(x => x.HostId)
-            .NotEmpty();
-
         RuleFor(x => x.CategoryId)
             .GreaterThan(0);
 
