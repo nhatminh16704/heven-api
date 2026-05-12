@@ -1,4 +1,4 @@
-﻿using System.Data.Common;
+using System.Data.Common;
 using Heven.Api.Application.Common.Interfaces;
 using Heven.Api.Infrastructure.Data;
 using Microsoft.AspNetCore.Hosting;

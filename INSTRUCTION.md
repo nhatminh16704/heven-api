@@ -152,3 +152,24 @@ public record CreateListingCommand : IRequest<int> { ... }
 ---
 
 **Luôn nhớ:** Dependency Injection chỉ chảy 1 chiều từ ngoài vào trong: `Web` -> `Infrastructure` -> `Application` -> `Domain`. Đừng reference chéo nhau làm gãy code!
+
+---
+
+## 7. Functional Testing (Integration Tests)
+
+**Vị trí:** `tests/Application.FunctionalTests/`
+
+Hệ thống Functional Test của Heven.Api sử dụng NUnit và NSubstitute/Moq để giả lập một môi trường API gần giống thực tế nhất. Tuy nhiên, có một số **Gotchas (cạm bẫy)** rất dễ gặp mà bạn phải chú ý:
+
+### 7.1. Database luôn bị Clear trước mỗi Test
+Để đảm bảo tính độc lập, ở đầu mỗi Test hệ thống sẽ chạy thư viện `Respawner` để xoá sạch Database.
+👉 **Luôn luôn Seed Data:** Mọi Test muốn thao tác dữ liệu (như Update/Delete) thì BẮT BUỘC phải dùng lệnh mồi dữ liệu giả ngay trong hàm Test đó (sử dụng `await AddAsync(...)` hoặc chạy lệnh Create trước).
+
+### 7.2. Lỗi ValidationException do quên set biến bắt buộc
+Vì Test chỉ mô phỏng dữ liệu, đôi khi bạn dùng một biến `CreateCommand` hoặc `UpdateCommand` bị thiếu dữ liệu (như kiểu số `int` để trống sẽ mặc định là `0`).
+👉 Trong khi đó, `CommandValidator` có thể quy định `RuleFor(x => x.Price).GreaterThan(0)`. Lúc này test sẽ đánh rớt ngay lập tức ở tầng Validation và báo lỗi `ValidationException`. Luôn chú ý điền đầy đủ các thuộc tính hợp lệ.
+
+### 7.3. Lỗi Đứt kết nối Redis (RedisConnectionException)
+Nếu `Command` của bạn chạy thành công và ném ra một Domain Event (VD: `ListingUpdatedEvent`), Event Handler sẽ chạy lệnh xoá cache Redis (gọi `IDistributedCache`).
+👉 Nhưng vì trong môi trường Test **KHÔNG bật Server Redis**, nó sẽ văng lỗi `RedisConnectionException`.
+✅ **Cách sửa:** Luôn nhớ chèn thêm `services.AddDistributedMemoryCache();` vào hàm `ConfigureTestServices` của `CustomWebApplicationFactory.cs` để giả lập Redis bằng RAM nội bộ, test sẽ chạy êm ru.

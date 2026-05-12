@@ -13,9 +13,9 @@ public class CreateListingTests : BaseTestFixture
     [Test]
     public async Task ShouldRequireMinimumFields()
     {
+        await RunAsAdministratorAsync();
         var command = new CreateListingCommand
         {
-            HostId = "",
             Title = "",
             Location = null!
         };
@@ -27,7 +27,7 @@ public class CreateListingTests : BaseTestFixture
     [Test]
     public async Task ShouldCreateListingWithNestedEntities()
     {
-        var userId = await RunAsDefaultUserAsync();
+        var userId = await RunAsAdministratorAsync();
 
         // 1. Arrange - Khởi tạo dữ liệu liên quan để tránh lỗi Foreign Key
         var category = new Category { Name = "Resort", Icon = "home", SortOrder = 1 };
@@ -45,7 +45,6 @@ public class CreateListingTests : BaseTestFixture
 
         var command = new CreateListingCommand
         {
-            HostId = userId,
             CategoryId = category.Id,
             Title = "Biệt thự sát biển cao cấp",
             Description = "View biển cực chill",
