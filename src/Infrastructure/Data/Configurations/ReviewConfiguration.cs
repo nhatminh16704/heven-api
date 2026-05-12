@@ -33,6 +33,12 @@ public class ReviewConfiguration : IEntityTypeConfiguration<Review>
             .HasForeignKey(x => x.BookingId)
             .OnDelete(DeleteBehavior.Restrict);
 
+        builder.HasOne(x => x.AuthorProfile)
+            .WithMany()
+            .HasPrincipalKey(p => p.UserId)
+            .HasForeignKey(x => x.AuthorId)
+            .OnDelete(DeleteBehavior.Restrict);
+
         builder.HasIndex(x => x.ListingId);
         builder.HasIndex(x => x.BookingId);
         builder.HasIndex(x => x.AuthorId);

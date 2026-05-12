@@ -3,6 +3,7 @@ using Heven.Api.Domain.Enums;
 
 namespace Heven.Api.Domain.Entities;
 
+
 public class Review : BaseAuditableEntity
 {
     public int BookingId { get; set; }
@@ -16,4 +17,5 @@ public class Review : BaseAuditableEntity
 
     public Booking Booking { get; set; } = null!;
     public Listing Listing { get; set; } = null!;
+    public UserProfile AuthorProfile { get; set; } = null!;
 }

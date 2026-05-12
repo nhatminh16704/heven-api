@@ -1,10 +1,12 @@
-using Heven.Api.Application.Common.Models;
+﻿using Heven.Api.Application.Common.Models;
 using Heven.Api.Application.Listings.Commands.CreateListing;
 using Heven.Api.Application.Listings.Commands.UpdateListing;
 using Heven.Api.Application.Listings.Queries.GetListingById;
 using Heven.Api.Application.Listings.Queries.GetListingsWithPagination;
+using Heven.Api.Application.Listings.Queries.GetListingReviewsWithPagination;
 using Heven.Api.Web.Infrastructure;
 using MediatR;
+using Microsoft.AspNetCore.Http;
 
 namespace Heven.Api.Web.Endpoints;
 
@@ -15,6 +17,7 @@ public class Listings : EndpointGroupBase
         app.MapGroup(this)
             .MapGet(GetListingsWithPagination)
             .MapGet(GetListingById, "{id}")
+            .MapGet(GetListingReviewsWithPagination, "{listingId}/reviews")
             .MapPost(CreateListing)
             .MapPut(UpdateListing, "{id}");
     }
@@ -27,6 +30,11 @@ public class Listings : EndpointGroupBase
     public async Task<ListingDto> GetListingById(ISender sender, int id)
     {
         return await sender.Send(new GetListingByIdQuery { Id = id });
+    }
+
+    public async Task<PaginatedList<ReviewDto>> GetListingReviewsWithPagination(ISender sender, [AsParameters] GetListingReviewsWithPaginationQuery query)
+    {
+        return await sender.Send(query);
     }
 
     public async Task<IResult> CreateListing(ISender sender, CreateListingCommand command)
