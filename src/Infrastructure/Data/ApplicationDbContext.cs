@@ -28,6 +28,7 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>, IApplica
     public DbSet<Payment> Payments => Set<Payment>();
     public DbSet<BookingCancellation> BookingCancellations => Set<BookingCancellation>();
     public DbSet<Review> Reviews => Set<Review>();
+    public DbSet<ReviewReply> ReviewReplies => Set<ReviewReply>();
     public DbSet<Conversation> Conversations => Set<Conversation>();
     public DbSet<Message> Messages => Set<Message>();
     public DbSet<Notification> Notifications => Set<Notification>();

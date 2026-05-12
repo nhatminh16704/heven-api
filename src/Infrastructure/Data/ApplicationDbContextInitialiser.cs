@@ -353,17 +353,23 @@ public class ApplicationDbContextInitialiser
                 };
                 _context.Payments.Add(payment);
 
-                // Thêm Review (Nối với Booking, Listing, Guest, Host)
+                // Thêm Review (Nối với Booking, Listing, Guest)
                 var review = new Review
                 {
                     BookingId = booking.Id,
                     ListingId = savedListing.Id,
-                    AuthorId = guestUser.Id,
-                    TargetId = hostUser.Id,
-                    Type = Heven.Api.Domain.Enums.ReviewType.GuestToHost,
+                    AuthorId = guestUser.Id, // Khách đánh giá
                     OverallRating = 5,
                     Comment = "Một trải nghiệm quá tuyệt vời, chủ nhà thân thiện!"
                 };
+                
+                // Host phản hồi lại
+                review.Reply = new ReviewReply
+                {
+                    AuthorId = hostUser.Id, 
+                    Comment = "Cảm ơn bạn rất nhiều! Rất hy vọng được đón tiếp bạn trong tương lai."
+                };
+
                 _context.Reviews.Add(review);
 
                 // Thêm Conversation (Nối với Listing, Host, Guest)

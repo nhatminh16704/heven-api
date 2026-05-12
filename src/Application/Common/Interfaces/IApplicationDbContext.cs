@@ -20,6 +20,7 @@ public interface IApplicationDbContext
     DbSet<Payment> Payments { get; }
     DbSet<BookingCancellation> BookingCancellations { get; }
     DbSet<Review> Reviews { get; }
+    DbSet<ReviewReply> ReviewReplies { get; }
     DbSet<Conversation> Conversations { get; }
     DbSet<Message> Messages { get; }
     DbSet<Notification> Notifications { get; }

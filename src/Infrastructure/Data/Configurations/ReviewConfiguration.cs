@@ -1,4 +1,4 @@
-using Heven.Api.Domain.Entities;
+﻿using Heven.Api.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -12,16 +12,8 @@ public class ReviewConfiguration : IEntityTypeConfiguration<Review>
             .HasMaxLength(450)
             .IsRequired();
 
-        builder.Property(x => x.TargetId)
-            .HasMaxLength(450)
-            .IsRequired();
-
         builder.Property(x => x.Comment)
             .HasMaxLength(2000);
-
-        builder.Property(x => x.Type)
-            .HasConversion<string>()
-            .HasMaxLength(50);
 
         builder.HasOne(x => x.Listing)
             .WithMany(x => x.Reviews)
@@ -38,6 +30,12 @@ public class ReviewConfiguration : IEntityTypeConfiguration<Review>
             .HasPrincipalKey(p => p.UserId)
             .HasForeignKey(x => x.AuthorId)
             .OnDelete(DeleteBehavior.Restrict);
+
+        // Map quan hệ 1-1 với ReviewReply
+        builder.HasOne(x => x.Reply)
+            .WithOne(r => r.Review)
+            .HasForeignKey<ReviewReply>(r => r.ReviewId)
+            .OnDelete(DeleteBehavior.Cascade);
 
         builder.HasIndex(x => x.ListingId);
         builder.HasIndex(x => x.BookingId);
