@@ -1265,6 +1265,14 @@
           },
           "reviewer": {
             "$ref": "#/components/schemas/ReviewerDto"
+          },
+          "reply": {
+            "nullable": true,
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/ReviewReplyDto"
+              }
+            ]
           }
         }
       },
@@ -1283,6 +1291,30 @@
             "nullable": true
           },
           "location": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      },
+      "ReviewReplyDto": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "comment": {
+            "type": "string"
+          },
+          "created": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "authorName": {
+            "type": "string"
+          },
+          "avatarUrl": {
             "type": "string",
             "nullable": true
           }

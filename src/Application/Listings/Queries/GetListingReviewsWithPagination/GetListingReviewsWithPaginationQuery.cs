@@ -1,11 +1,10 @@
-using AutoMapper;
+﻿using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using Heven.Api.Application.Common.Caching;
 using Heven.Api.Application.Common.Caching.Keys;
 using Heven.Api.Application.Common.Interfaces;
 using Heven.Api.Application.Common.Mappings;
 using Heven.Api.Application.Common.Models;
-using Heven.Api.Domain.Entities;
 using Heven.Api.Domain.Enums;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -37,7 +36,8 @@ public class GetListingReviewsWithPaginationQueryHandler : IRequestHandler<GetLi
     public async Task<PaginatedList<ReviewDto>> Handle(GetListingReviewsWithPaginationQuery request, CancellationToken cancellationToken)
     {
         return await _context.Reviews
-            .Where(r => r.ListingId == request.ListingId && r.Booking.Status == BookingStatus.Completed)
+            .AsNoTracking()
+            .Where(r => r.ListingId == request.ListingId)
             .OrderByDescending(r => r.Created)
             .ProjectTo<ReviewDto>(_mapper.ConfigurationProvider)
             .PaginatedListAsync(request.PageNumber, request.PageSize);
