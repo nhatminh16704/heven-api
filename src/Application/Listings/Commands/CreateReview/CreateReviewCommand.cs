@@ -1,5 +1,6 @@
-using Heven.Api.Application.Common.Interfaces;
+﻿using Heven.Api.Application.Common.Interfaces;
 using Heven.Api.Domain.Entities;
+using Heven.Api.Domain.Events; // --> Thêm namespace này
 using MediatR;
 
 namespace Heven.Api.Application.Listings.Commands.CreateReview;
@@ -33,6 +34,9 @@ public class CreateReviewCommandHandler : IRequestHandler<CreateReviewCommand, i
             OverallRating = request.Rating,
             Comment = request.Comment
         };
+
+        // Gắn Event thông báo có 1 Review mới được tạo!
+        review.AddDomainEvent(new ReviewCreatedEvent(review));
 
         _context.Reviews.Add(review);
 
