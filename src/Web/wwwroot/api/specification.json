@@ -225,6 +225,100 @@
         }
       }
     },
+    "/api/listings/{listingId}/reviews/{reviewId}/reply": {
+      "post": {
+        "tags": [
+          "Listings"
+        ],
+        "operationId": "CreateReviewReply",
+        "parameters": [
+          {
+            "name": "listingId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "x-position": 1
+          },
+          {
+            "name": "reviewId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "x-position": 2
+          }
+        ],
+        "requestBody": {
+          "x-name": "command",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateReviewReplyCommand"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 3
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/api/listings/{listingId}/reviews/{id}": {
+      "put": {
+        "tags": [
+          "Listings"
+        ],
+        "operationId": "UpdateListingReview",
+        "parameters": [
+          {
+            "name": "listingId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "x-position": 1
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "x-position": 2
+          }
+        ],
+        "requestBody": {
+          "x-name": "command",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateReviewCommand"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 3
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        }
+      }
+    },
     "/api/todoitems": {
       "get": {
         "tags": [
@@ -1430,6 +1524,46 @@
             "format": "int32"
           },
           "bookingId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "rating": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "comment": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      },
+      "CreateReviewReplyCommand": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "listingId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "reviewId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "comment": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      },
+      "UpdateReviewCommand": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "listingId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "id": {
             "type": "integer",
             "format": "int32"
           },
