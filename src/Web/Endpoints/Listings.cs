@@ -1,5 +1,6 @@
 ﻿using Heven.Api.Application.Common.Models;
 using Heven.Api.Application.Listings.Commands.CreateListing;
+using Heven.Api.Application.Listings.Commands.CreateReview;
 using Heven.Api.Application.Listings.Commands.UpdateListing;
 using Heven.Api.Application.Listings.Queries.GetListingById;
 using Heven.Api.Application.Listings.Queries.GetListingsWithPagination;
@@ -19,6 +20,7 @@ public class Listings : EndpointGroupBase
             .MapGet(GetListingById, "{id}")
             .MapGet(GetListingReviewsWithPagination, "{listingId}/reviews")
             .MapPost(CreateListing)
+            .MapPost(CreateListingReview, "{listingId}/reviews") // Endpoint mới được thêm
             .MapPut(UpdateListing, "{id}");
     }
 
@@ -41,6 +43,14 @@ public class Listings : EndpointGroupBase
     {
         var id = await sender.Send(command);
         return Results.CreatedAtRoute(nameof(GetListingById), new { id }, id);
+    }
+
+    // Xử lý tạo review cho listing
+    public async Task<IResult> CreateListingReview(ISender sender, int listingId, CreateReviewCommand command)
+    {
+        if (listingId != command.ListingId) return Results.BadRequest();
+        var id = await sender.Send(command);
+        return Results.Ok(id);
     }
 
     public async Task<IResult> UpdateListing(ISender sender, int id, UpdateListingCommand command)
