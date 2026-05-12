@@ -1,4 +1,4 @@
-﻿using Heven.Api.Infrastructure.Identity;
+using Heven.Api.Infrastructure.Identity;
 
 namespace Heven.Api.Web.Endpoints;
 

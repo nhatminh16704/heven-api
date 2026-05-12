@@ -108,6 +108,17 @@ public class ApplicationDbContextInitialiser
             await _userManager.AddToRolesAsync(guestUser, new[] { Roles.Guest });
         }
 
+        // 2.1 Seed UserProfiles
+        if (!_context.UserProfiles.Any())
+        {
+            _context.UserProfiles.AddRange(
+                new UserProfile { UserId = administrator.Id, FirstName = "Admin", LastName = "System" },
+                new UserProfile { UserId = hostUser.Id, FirstName = "Host", LastName = "User" },
+                new UserProfile { UserId = guestUser.Id, FirstName = "Guest", LastName = "User" }
+            );
+            await _context.SaveChangesAsync();
+        }
+
         // 3. Default data (Seed, if necessary)
         if (!_context.TodoLists.Any())
         {
