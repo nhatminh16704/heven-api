@@ -3,10 +3,12 @@ using Heven.Api.Domain.Constants;
 using Heven.Api.Infrastructure.Data;
 using Heven.Api.Infrastructure.Data.Interceptors;
 using Heven.Api.Infrastructure.Identity;
+using Heven.Api.Infrastructure.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.Configuration;
+using Stripe; // Add this using directive for Stripe
 
 namespace Microsoft.Extensions.DependencyInjection;
 
@@ -17,6 +19,11 @@ public static class DependencyInjection
         var connectionString = configuration.GetConnectionString("DefaultConnection");
 
         Guard.Against.Null(connectionString, message: "Connection string 'DefaultConnection' not found.");
+        
+        // Cấu hình Stripe
+        var stripeSecretKey = configuration.GetSection("StripeSettings")["SecretKey"];
+        Guard.Against.Null(stripeSecretKey, message: "Stripe SecretKey not found in configuration.");
+        StripeConfiguration.ApiKey = stripeSecretKey;
 
         services.AddScoped<ISaveChangesInterceptor, AuditableEntityInterceptor>();
         services.AddScoped<ISaveChangesInterceptor, DispatchDomainEventsInterceptor>();
@@ -39,7 +46,6 @@ public static class DependencyInjection
                 name: "redis",
                 tags: ["cache"]);
 
-
         services.AddScoped<IApplicationDbContext>(provider => provider.GetRequiredService<ApplicationDbContext>());
 
         services.AddScoped<ApplicationDbContextInitialiser>();
@@ -56,12 +62,13 @@ public static class DependencyInjection
             .AddApiEndpoints();
 
         services.AddSingleton(TimeProvider.System);
-        services.AddTransient<IIdentityService, IdentityService>();
+        services.AddTransient<IIdentityService, Heven.Api.Infrastructure.Identity.IdentityService>();
 
         services.AddAuthorization(options =>
             options.AddPolicy(Policies.CanPurge, policy => policy.RequireRole(Roles.Administrator)));
 
-
+        // Đăng ký IPaymentService
+        services.AddTransient<IPaymentService, StripePaymentService>();
 
         return services;
     }

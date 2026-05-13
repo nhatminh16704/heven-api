@@ -6,6 +6,38 @@
     "version": "1.0.0"
   },
   "paths": {
+    "/api/bookings/checkout": {
+      "post": {
+        "tags": [
+          "Bookings"
+        ],
+        "operationId": "CreateCheckoutSession",
+        "requestBody": {
+          "x-name": "command",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateCheckoutSessionCommand"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/listings": {
       "get": {
         "tags": [
@@ -1095,6 +1127,22 @@
   },
   "components": {
     "schemas": {
+      "CreateCheckoutSessionCommand": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "bookingId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "successUrl": {
+            "type": "string"
+          },
+          "cancelUrl": {
+            "type": "string"
+          }
+        }
+      },
       "PaginatedListOfListingBriefDto": {
         "type": "object",
         "additionalProperties": false,
