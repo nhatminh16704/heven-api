@@ -1123,6 +1123,19 @@
           }
         ]
       }
+    },
+    "/api/webhook/stripe": {
+      "post": {
+        "tags": [
+          "Webhook"
+        ],
+        "operationId": "StripeWebhook",
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        }
+      }
     }
   },
   "components": {
