@@ -33,6 +33,7 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>, IApplica
     public DbSet<Message> Messages => Set<Message>();
     public DbSet<Notification> Notifications => Set<Notification>();
     public DbSet<UserProfile> UserProfiles => Set<UserProfile>();
+    public DbSet<ListingCalendar> ListingCalendars => Set<ListingCalendar>();
 
     protected override void OnModelCreating(ModelBuilder builder)
     {

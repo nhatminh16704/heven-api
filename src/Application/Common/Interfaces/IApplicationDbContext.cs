@@ -25,6 +25,7 @@ public interface IApplicationDbContext
     DbSet<Message> Messages { get; }
     DbSet<Notification> Notifications { get; }
     DbSet<UserProfile> UserProfiles { get; }
+    DbSet<ListingCalendar> ListingCalendars { get; }
 
     Task<int> SaveChangesAsync(CancellationToken cancellationToken);
 }
