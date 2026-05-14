@@ -1,5 +1,6 @@
 using Heven.Api.Application.Common.Interfaces;
 using Heven.Api.Domain.Constants;
+using Heven.Api.Infrastructure.Configuration;
 using Heven.Api.Infrastructure.Data;
 using Heven.Api.Infrastructure.Data.Interceptors;
 using Heven.Api.Infrastructure.Identity;
@@ -18,11 +19,11 @@ public static class DependencyInjection
     {
         var connectionString = configuration.GetConnectionString("DefaultConnection");
 
-        Guard.Against.Null(connectionString, message: "Connection string 'DefaultConnection' not found.");
+
         
         // Cấu hình Stripe
         var stripeSecretKey = configuration.GetSection("StripeSettings")["SecretKey"];
-        Guard.Against.Null(stripeSecretKey, message: "Stripe SecretKey not found in configuration.");
+        Guard.Against.NullOrWhiteSpace(stripeSecretKey, message: "Stripe SecretKey is empty or missing.");
         StripeConfiguration.ApiKey = stripeSecretKey;
 
         services.AddScoped<ISaveChangesInterceptor, AuditableEntityInterceptor>();
@@ -55,11 +56,15 @@ public static class DependencyInjection
 
         services.AddAuthorizationBuilder();
 
+        services.Configure<EmailSettings>(configuration.GetSection(EmailSettings.SectionName));
+
         services
             .AddIdentityCore<ApplicationUser>()
             .AddRoles<IdentityRole>()
             .AddEntityFrameworkStores<ApplicationDbContext>()
             .AddApiEndpoints();
+
+        services.AddTransient<IEmailSender<ApplicationUser>, MailKitEmailSender>();
 
         services.AddSingleton(TimeProvider.System);
         services.AddTransient<IIdentityService, Heven.Api.Infrastructure.Identity.IdentityService>();
