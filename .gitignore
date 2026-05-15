@@ -5,6 +5,10 @@ File: .gitignore
 ##
 ## Get latest from `dotnet new gitignore`
 
+
+# C# Dev Kit / VS Code cache
+*.iscache
+.elg/
 # Application settings with secrets
 appsettings.Development.json
 

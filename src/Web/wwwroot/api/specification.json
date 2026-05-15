@@ -6,6 +6,31 @@
     "version": "1.0.0"
   },
   "paths": {
+    "/api/bookings": {
+      "post": {
+        "tags": [
+          "Bookings"
+        ],
+        "operationId": "CreateBooking",
+        "requestBody": {
+          "x-name": "command",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateBookingCommand"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        }
+      }
+    },
     "/api/bookings/checkout": {
       "post": {
         "tags": [
@@ -26,14 +51,7 @@
         },
         "responses": {
           "200": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "string"
-                }
-              }
-            }
+            "description": ""
           }
         }
       }
@@ -1140,6 +1158,32 @@
   },
   "components": {
     "schemas": {
+      "CreateBookingCommand": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "listingId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "checkIn": {
+            "type": "string",
+            "format": "date"
+          },
+          "checkOut": {
+            "type": "string",
+            "format": "date"
+          },
+          "guestCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "specialRequests": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      },
       "CreateCheckoutSessionCommand": {
         "type": "object",
         "additionalProperties": false,

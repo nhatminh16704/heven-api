@@ -30,8 +30,7 @@ public class ListingUpdatedEventHandler : INotificationHandler<ListingUpdatedEve
         }
         catch (Exception ex)
         {
-            // Side effect only: must not fail SaveChanges (runs inside SavingChanges interceptor).
-            _logger.LogWarning(ex, "Domain Event: Failed to clear cache for {CacheKey}", detailCacheKey);
+            _logger.LogWarning(ex, "Failed to clear cache for {CacheKey}", detailCacheKey);
         }
     }
 }

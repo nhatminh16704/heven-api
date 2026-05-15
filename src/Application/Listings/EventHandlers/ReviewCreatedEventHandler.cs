@@ -24,7 +24,6 @@ public class ReviewCreatedEventHandler : INotificationHandler<ReviewCreatedEvent
 
         var listingId = notification.Item.ListingId;
 
-        // EF Core FindAsync sẽ tìm trên Database NẾU chưac có trong RAM
         var listing = await _context.Listings.FindAsync([listingId], cancellationToken);
 
         if (listing != null)

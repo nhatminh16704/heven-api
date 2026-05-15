@@ -9,6 +9,9 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.Configuration;
+using RedLockNet.SERedis;
+using RedLockNet.SERedis.Configuration;
+using StackExchange.Redis;
 using Stripe; // Add this using directive for Stripe
 
 namespace Microsoft.Extensions.DependencyInjection;
@@ -35,17 +38,27 @@ public static class DependencyInjection
             options.UseSqlServer(connectionString, b => b.UseQuerySplittingBehavior(QuerySplittingBehavior.SplitQuery));
         });
 
+        var redisConnection = configuration.GetConnectionString("RedisConnection");
+        Guard.Against.NullOrWhiteSpace(redisConnection, message: "RedisConnection is empty or missing.");
+
         services.AddStackExchangeRedisCache(options =>
         {
-            options.Configuration = configuration.GetConnectionString("RedisConnection");
+            options.Configuration = redisConnection;
             options.InstanceName = "Heven_"; // Tiền tố cho các Key để dễ quản lý trong Redis
         });
 
+        services.AddSingleton<IConnectionMultiplexer>(_ => ConnectionMultiplexer.Connect(redisConnection));
+
+        services.AddSingleton<RedLockFactory>(sp =>
+        {
+            var multiplexer = sp.GetRequiredService<IConnectionMultiplexer>();
+            return RedLockFactory.Create([new RedLockMultiplexer(multiplexer)]);
+        });
+
+        services.AddSingleton<IDistributedLockService, RedLockDistributedLockService>();
+
         services.AddHealthChecks()
-            .AddRedis(
-                configuration.GetConnectionString("RedisConnection")!,
-                name: "redis",
-                tags: ["cache"]);
+            .AddRedis(redisConnection, name: "redis", tags: ["cache"]);
 
         services.AddScoped<IApplicationDbContext>(provider => provider.GetRequiredService<ApplicationDbContext>());
 

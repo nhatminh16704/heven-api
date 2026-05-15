@@ -29,6 +29,13 @@ public class IdentityService : IIdentityService
         return user?.UserName;
     }
 
+    public async Task<bool> IsEmailConfirmedAsync(string userId)
+    {
+        var user = await _userManager.FindByIdAsync(userId);
+
+        return user?.EmailConfirmed ?? false;
+    }
+
     public async Task<(Result Result, string UserId)> CreateUserAsync(string userName, string password)
     {
         var user = new ApplicationUser

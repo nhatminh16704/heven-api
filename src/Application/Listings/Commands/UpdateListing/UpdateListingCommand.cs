@@ -63,12 +63,14 @@ public class UpdateListingCommandHandler : IRequestHandler<UpdateListingCommand>
     private readonly IApplicationDbContext _context;
     private readonly IMapper _mapper;
     private readonly IUser _user;
+    private readonly IMediator _mediator;
 
-    public UpdateListingCommandHandler(IApplicationDbContext context, IMapper mapper, IUser user)
+    public UpdateListingCommandHandler(IApplicationDbContext context, IMapper mapper, IUser user, IMediator mediator)
     {
         _context = context;
         _mapper = mapper;
         _user = user;
+        _mediator = mediator;
     }
 
     public async Task Handle(UpdateListingCommand request, CancellationToken cancellationToken)
@@ -115,8 +117,8 @@ public class UpdateListingCommandHandler : IRequestHandler<UpdateListingCommand>
             entity.Amenities.Add(new ListingAmenity { AmenityId = newId });
         }
 
-        entity.AddDomainEvent(new ListingUpdatedEvent(entity));
-
         await _context.SaveChangesAsync(cancellationToken);
+
+        await _mediator.Publish(new ListingUpdatedEvent(entity), cancellationToken);
     }
 }
