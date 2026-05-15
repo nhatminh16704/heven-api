@@ -4,7 +4,6 @@ using Heven.Api.Domain.Constants;
 using Heven.Api.Domain.Entities;
 using Heven.Api.Domain.Enums;
 using Heven.Api.Domain.Events;
-using MediatR;
 
 namespace Heven.Api.Application.Bookings.Commands.CreateBooking;
 
@@ -57,6 +56,18 @@ public class CreateBookingCommandHandler : IRequestHandler<CreateBookingCommand,
         var calendarRows = await _context.ListingCalendars
             .Where(lc => lc.ListingId == request.ListingId && stayDates.Contains(lc.Date))
             .ToListAsync(cancellationToken);
+
+        // -- Check CALENDAR -- //
+        if (calendarRows.Count != stayDates.Count)
+        {
+            throw new InvalidOperationException("One or more nights are not configured on the listing calendar.");
+        }
+
+        if (calendarRows.Any(r => r.Status != ListingCalendarStatuses.Available))
+        {
+            throw new InvalidOperationException("Some selected dates are blocked or already booked.");
+        }
+        // ------------------------------------ //
 
         decimal nightlyTotal = 0;
         foreach (var row in calendarRows)

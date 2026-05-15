@@ -30,7 +30,7 @@ public class CreateBookingCommandValidator : AbstractValidator<CreateBookingComm
             .MustAsync(HaveVerifiedEmailAsync)
                 .WithMessage("Verify your email before booking.")
                 .WithErrorCode(ErrorCodes.EmailNotVerified)
-            .CustomAsync(ValidateListingAndCalendarAsync);
+            .CustomAsync(ValidateListingAsync);
     }
 
     private async Task<bool> HaveUserProfileAsync(CreateBookingCommand command, CancellationToken cancellationToken)
@@ -43,7 +43,7 @@ public class CreateBookingCommandValidator : AbstractValidator<CreateBookingComm
         return await _identityService.IsEmailConfirmedAsync(_user.Id!);
     }
 
-    private async Task ValidateListingAndCalendarAsync(
+    private async Task ValidateListingAsync(
         CreateBookingCommand command,
         ValidationContext<CreateBookingCommand> context,
         CancellationToken cancellationToken)
@@ -70,28 +70,6 @@ public class CreateBookingCommandValidator : AbstractValidator<CreateBookingComm
         if (command.GuestCount > listing.MaxGuests)
         {
             context.AddFailure(nameof(command.GuestCount), $"Guest count cannot exceed {listing.MaxGuests}.");
-            return;
-        }
-
-        var stayDates = new List<DateOnly>();
-        for (var d = command.CheckIn; d < command.CheckOut; d = d.AddDays(1))
-        {
-            stayDates.Add(d);
-        }
-
-        var calendarRows = await _context.ListingCalendars
-            .Where(lc => lc.ListingId == command.ListingId && stayDates.Contains(lc.Date))
-            .ToListAsync(cancellationToken);
-
-        if (calendarRows.Count != stayDates.Count)
-        {
-            context.AddFailure(nameof(command.CheckIn), "One or more nights are not configured on the listing calendar.");
-            return;
-        }
-
-        if (calendarRows.Any(r => r.Status != ListingCalendarStatuses.Available))
-        {
-            context.AddFailure(nameof(command.CheckIn), "Some selected dates are blocked or already booked.");
         }
     }
 }

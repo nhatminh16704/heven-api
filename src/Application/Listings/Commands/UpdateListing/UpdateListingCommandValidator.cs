@@ -7,7 +7,7 @@ public class UpdateListingCommandValidator : AbstractValidator<UpdateListingComm
     public UpdateListingCommandValidator()
     {
         RuleFor(x => x.Id)
-            .GreaterThan(0);
+            .GreaterThan(0).WithMessage("Listing ID must be greater than 0.");
 
         RuleFor(x => x.CategoryId)
             .GreaterThan(0);
@@ -17,7 +17,7 @@ public class UpdateListingCommandValidator : AbstractValidator<UpdateListingComm
             .MaximumLength(200);
 
         RuleFor(x => x.PricePerNight)
-            .GreaterThan(0);
+            .GreaterThan(0).WithMessage("Price per night must be greater than 0.");
 
         RuleFor(x => x.MaxGuests)
             .GreaterThan(0);

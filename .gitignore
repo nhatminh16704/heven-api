@@ -7,7 +7,7 @@ File: .gitignore
 
 
 # C# Dev Kit / VS Code cache
-*.iscache
+*.lscache
 .elg/
 # Application settings with secrets
 appsettings.Development.json
