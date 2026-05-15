@@ -1,5 +1,6 @@
 ﻿using FluentValidation;
 using Heven.Api.Application.Common.Interfaces;
+using Heven.Api.Domain.Constants;
 using Heven.Api.Domain.Enums;
 using Microsoft.EntityFrameworkCore;
 
@@ -27,9 +28,15 @@ public class CreateReviewCommandValidator : AbstractValidator<CreateReviewComman
         // Thêm Cascade(CascadeMode.Stop) tại đây để ngắt vòng lặp xác thực nếu một quy tắc bị lỗi.
         RuleFor(v => v)
             .Cascade(CascadeMode.Stop)
-            .MustAsync(HaveProfileAsync).WithMessage("You need to complete your profile before writing a review.")
-            .MustAsync(HaveCompletedBookingAsync).WithMessage("You cannot review this listing because the booking information does not match or the booking is not completed.")
-            .MustAsync(HaveNotReviewedYetAsync).WithMessage("You have already reviewed this booking.");
+            .MustAsync(HaveProfileAsync)
+                .WithMessage("You need to complete your profile before writing a review.")
+                .WithErrorCode(ErrorCodes.ProfileIncomplete)
+            .MustAsync(HaveCompletedBookingAsync)
+                .WithMessage("You cannot review this listing because the booking information does not match or the booking is not completed.")
+                .WithErrorCode(ErrorCodes.BookingNotCompleted)
+            .MustAsync(HaveNotReviewedYetAsync)
+                .WithMessage("You have already reviewed this booking.")
+                .WithErrorCode(ErrorCodes.AlreadyReviewed);
     }
 
     private async Task<bool> HaveProfileAsync(CreateReviewCommand command, CancellationToken cancellationToken)

@@ -24,8 +24,12 @@ public class CreateBookingCommandValidator : AbstractValidator<CreateBookingComm
 
         RuleFor(v => v)
             .Cascade(CascadeMode.Stop)
-            .MustAsync(HaveUserProfileAsync).WithMessage("You need to complete your profile before booking.")
-            .MustAsync(HaveVerifiedEmailAsync).WithMessage("Verify your email before booking.")
+            .MustAsync(HaveUserProfileAsync)
+                .WithMessage("You need to complete your profile before booking.")
+                .WithErrorCode(ErrorCodes.ProfileIncomplete)
+            .MustAsync(HaveVerifiedEmailAsync)
+                .WithMessage("Verify your email before booking.")
+                .WithErrorCode(ErrorCodes.EmailNotVerified)
             .CustomAsync(ValidateListingAndCalendarAsync);
     }
 

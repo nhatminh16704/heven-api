@@ -59,6 +59,7 @@ Common/
  BaseEvent.cs
  ValueObject.cs
 Constants/
+ ErrorCodes.cs
  ListingCalendarStatuses.cs
  Policies.cs
  Roles.cs
