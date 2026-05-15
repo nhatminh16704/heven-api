@@ -22,12 +22,16 @@ public class ListingUpdatedEventHandler : INotificationHandler<ListingUpdatedEve
         var listingId = notification.Item.Id;
         
         var detailCacheKey = ListingCacheKeys.Details(listingId);
-        
-        await _cache.RemoveAsync(detailCacheKey, cancellationToken);
 
-        _logger.LogInformation("Domain Event: Cache cleared for {CacheKey}", detailCacheKey);
-
-        // Vì listing bị thay đổi (ví dụ: đổi giá, đổi tên), dữ liệu hiển thị ngoài trang chủ (List)
-        // cũng có thể bị sai lệchsẽ cần xóa cả Cache của List.
+        try
+        {
+            await _cache.RemoveAsync(detailCacheKey, cancellationToken);
+            _logger.LogInformation("Domain Event: Cache cleared for {CacheKey}", detailCacheKey);
+        }
+        catch (Exception ex)
+        {
+            // Side effect only: must not fail SaveChanges (runs inside SavingChanges interceptor).
+            _logger.LogWarning(ex, "Domain Event: Failed to clear cache for {CacheKey}", detailCacheKey);
+        }
     }
 }
