@@ -43,7 +43,7 @@ public class CustomExceptionHandler : IExceptionHandler
             Field = x.Key,
             Message = e.ErrorMessage,
             // Ẩn đi ErrorCode hoặc cấu hình tuỳ chỉnh nếu nó kết thúc bằng "Validator"
-            Code = e.ErrorCode?.EndsWith("Validator") == true ? "INVALID_INPUT" : e.ErrorCode 
+            Code = e.ErrorCode?.EndsWith("Validator") == true ? "INVALID_INPUT" : e.ErrorCode  
         }));
         
         await httpContext.Response.WriteAsJsonAsync(ApiResponse<object>.Failure(errorDetails));

@@ -30,13 +30,13 @@ public class CreateReviewCommandValidator : AbstractValidator<CreateReviewComman
             .Cascade(CascadeMode.Stop)
             .MustAsync(HaveProfileAsync)
                 .WithMessage("You need to complete your profile before writing a review.")
-                .WithErrorCode(ErrorCodes.ProfileIncomplete)
+                .WithErrorCode(ErrorCodes.User.ProfileIncomplete)
             .MustAsync(HaveCompletedBookingAsync)
                 .WithMessage("You cannot review this listing because the booking information does not match or the booking is not completed.")
-                .WithErrorCode(ErrorCodes.BookingNotCompleted)
+                .WithErrorCode(ErrorCodes.Review.BookingNotCompleted)
             .MustAsync(HaveNotReviewedYetAsync)
                 .WithMessage("You have already reviewed this booking.")
-                .WithErrorCode(ErrorCodes.AlreadyReviewed);
+                .WithErrorCode(ErrorCodes.Review.AlreadyReviewed);
     }
 
     private async Task<bool> HaveProfileAsync(CreateReviewCommand command, CancellationToken cancellationToken)

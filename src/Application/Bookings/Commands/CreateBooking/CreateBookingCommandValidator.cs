@@ -26,10 +26,10 @@ public class CreateBookingCommandValidator : AbstractValidator<CreateBookingComm
             .Cascade(CascadeMode.Stop)
             .MustAsync(HaveUserProfileAsync)
                 .WithMessage("You need to complete your profile before booking.")
-                .WithErrorCode(ErrorCodes.ProfileIncomplete)
+                .WithErrorCode(ErrorCodes.User.ProfileIncomplete)
             .MustAsync(HaveVerifiedEmailAsync)
                 .WithMessage("Verify your email before booking.")
-                .WithErrorCode(ErrorCodes.EmailNotVerified)
+                .WithErrorCode(ErrorCodes.User.EmailNotVerified)
             .CustomAsync(ValidateListingAsync);
     }
 

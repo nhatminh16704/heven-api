@@ -1,9 +1,13 @@
+using FluentValidation.Results;
 using Heven.Api.Application.Common.Interfaces;
 using Heven.Api.Application.Common.Security;
 using Heven.Api.Domain.Constants;
 using Heven.Api.Domain.Entities;
 using Heven.Api.Domain.Enums;
 using Heven.Api.Domain.Events;
+using MediatR;
+using Microsoft.EntityFrameworkCore;
+using ValidationException = Heven.Api.Application.Common.Exceptions.ValidationException;
 
 namespace Heven.Api.Application.Bookings.Commands.CreateBooking;
 
@@ -41,7 +45,13 @@ public class CreateBookingCommandHandler : IRequestHandler<CreateBookingCommand,
         await using var distributedLock = await _lockService.AcquireAsync($"listing:{request.ListingId}", cancellationToken);
         if (!distributedLock.IsAcquired)
         {
-            throw new InvalidOperationException("The listing is currently being processed by another booking request. Please try again.");
+            throw new ValidationException(new[] 
+            { 
+                new ValidationFailure(nameof(request.ListingId), "The listing is currently being processed by another booking request. Please try again.")
+                {
+                    ErrorCode = ErrorCodes.Booking.ListingLocked
+                } 
+            });
         }
 
         var listing = await _context.Listings.FirstOrDefaultAsync(l => l.Id == request.ListingId, cancellationToken);
@@ -60,12 +70,24 @@ public class CreateBookingCommandHandler : IRequestHandler<CreateBookingCommand,
         // -- Check CALENDAR -- //
         if (calendarRows.Count != stayDates.Count)
         {
-            throw new InvalidOperationException("One or more nights are not configured on the listing calendar.");
+            throw new ValidationException(new[] 
+            { 
+                new ValidationFailure(nameof(request.CheckIn), "One or more nights are not configured on the listing calendar.")
+                {
+                    ErrorCode = ErrorCodes.Booking.DatesNotConfigured
+                } 
+            });
         }
 
         if (calendarRows.Any(r => r.Status != ListingCalendarStatuses.Available))
         {
-            throw new InvalidOperationException("Some selected dates are blocked or already booked.");
+            throw new ValidationException(new[] 
+            { 
+                new ValidationFailure(nameof(request.CheckIn), "Some selected dates are blocked or already booked.")
+                {
+                    ErrorCode = ErrorCodes.Booking.DatesUnavailable
+                } 
+            });
         }
         // ------------------------------------ //
 
