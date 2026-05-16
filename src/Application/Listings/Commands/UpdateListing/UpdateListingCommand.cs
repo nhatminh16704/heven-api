@@ -6,6 +6,7 @@ using Heven.Api.Domain.Entities;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Heven.Api.Domain.Events;
+using Heven.Api.Domain.Constants;
 
 
 namespace Heven.Api.Application.Listings.Commands.UpdateListing;
@@ -82,7 +83,7 @@ public class UpdateListingCommandHandler : IRequestHandler<UpdateListingCommand>
 
         if (entity == null)
         {
-            throw new NotFoundException(nameof(Listing), request.Id.ToString());
+            throw new NotFoundException("Listing not found.", ErrorCodes.Listing.NotFound);
         }
 
         // Phải là chủ của Listing mới được phép Update

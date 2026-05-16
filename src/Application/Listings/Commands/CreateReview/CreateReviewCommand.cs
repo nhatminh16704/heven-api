@@ -1,7 +1,13 @@
-﻿using Heven.Api.Application.Common.Interfaces;
+﻿using Heven.Api.Application.Common.Exceptions;
+using Heven.Api.Application.Common.Interfaces;
+using Heven.Api.Domain.Constants;
 using Heven.Api.Domain.Entities;
-using Heven.Api.Domain.Events; // --> Thêm namespace này
+using Heven.Api.Domain.Enums;
+using Heven.Api.Domain.Events;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
+using ConflictException = Heven.Api.Application.Common.Exceptions.ConflictException;
+using ForbiddenAccessException = Heven.Api.Application.Common.Exceptions.ForbiddenAccessException;
 
 namespace Heven.Api.Application.Listings.Commands.CreateReview;
 
@@ -26,6 +32,37 @@ public class CreateReviewCommandHandler : IRequestHandler<CreateReviewCommand, i
 
     public async Task<int> Handle(CreateReviewCommand request, CancellationToken cancellationToken)
     {
+        if (string.IsNullOrEmpty(_user.Id))
+        {
+            throw new UnauthorizedAccessException();
+        }
+
+        var hasProfile = await _context.UserProfiles.AnyAsync(p => p.UserId == _user.Id, cancellationToken);
+        if (!hasProfile)
+        {
+             throw new ForbiddenAccessException("You need to complete your profile before writing a review.", ErrorCodes.User.ProfileIncomplete);
+        }
+
+        var bookingCompleted = await _context.Bookings.AnyAsync(b =>
+            b.Id == request.BookingId &&
+            b.ListingId == request.ListingId &&
+            b.GuestId == _user.Id &&
+            b.Status == BookingStatus.Completed, cancellationToken);
+
+        if (!bookingCompleted)
+        {
+            throw new ConflictException("You cannot review this listing because the booking information does not match or the booking is not completed.", ErrorCodes.Review.BookingNotCompleted);
+        }
+
+        var alreadyReviewed = await _context.Reviews.AnyAsync(r =>
+            r.BookingId == request.BookingId &&
+            r.AuthorId == _user.Id, cancellationToken);
+
+        if (alreadyReviewed)
+        {
+            throw new ConflictException("You have already reviewed this booking.", ErrorCodes.Review.AlreadyReviewed);
+        }
+
         var review = new Review
         {
             ListingId = request.ListingId,

@@ -1,6 +1,7 @@
 ﻿using Heven.Api.Application.Common.Exceptions;
 using Heven.Api.Application.Common.Models;
 using Microsoft.AspNetCore.Diagnostics;
+using NotFoundException = Heven.Api.Application.Common.Exceptions.NotFoundException;
 
 namespace Heven.Api.Web.Infrastructure;
 
@@ -16,6 +17,7 @@ public class CustomExceptionHandler : IExceptionHandler
             { typeof(NotFoundException), HandleNotFoundException },
             { typeof(UnauthorizedAccessException), HandleUnauthorizedAccessException },
             { typeof(ForbiddenAccessException), HandleForbiddenAccessException },
+            { typeof(ConflictException), HandleConflictException },
         };
     }
 
@@ -40,10 +42,8 @@ public class CustomExceptionHandler : IExceptionHandler
         
         var errorDetails = exception.Errors.SelectMany(x => x.Value.Select(e => new 
         {
-            Field = x.Key,
             Message = e.ErrorMessage,
-            // Ẩn đi ErrorCode hoặc cấu hình tuỳ chỉnh nếu nó kết thúc bằng "Validator"
-            Code = e.ErrorCode?.EndsWith("Validator") == true ? "INVALID_INPUT" : e.ErrorCode  
+            Code = e.ErrorCode?.EndsWith("Validator") == true ? "INVALID_INPUT" : e.ErrorCode
         }));
         
         await httpContext.Response.WriteAsJsonAsync(ApiResponse<object>.Failure(errorDetails));
@@ -55,24 +55,36 @@ public class CustomExceptionHandler : IExceptionHandler
         httpContext.Response.StatusCode = StatusCodes.Status404NotFound;
         var message = string.IsNullOrEmpty(exception.Message) ? "The specified resource was not found." : exception.Message;
         
-        await httpContext.Response.WriteAsJsonAsync(ApiResponse<object>.Failure(new { Message = message }));
+        await httpContext.Response.WriteAsJsonAsync(ApiResponse<object>.Failure(new { Message = message, Code = exception.ErrorCode }));
     }
 
     private async Task HandleUnauthorizedAccessException(HttpContext httpContext, Exception ex)
     {
         httpContext.Response.StatusCode = StatusCodes.Status401Unauthorized;
-        await httpContext.Response.WriteAsJsonAsync(ApiResponse<object>.Failure(new { Message = "Unauthorized" }));
+        await httpContext.Response.WriteAsJsonAsync(ApiResponse<object>.Failure(new { Message = "Unauthorized", Code = "UNAUTHORIZED" }));
     }
 
     private async Task HandleForbiddenAccessException(HttpContext httpContext, Exception ex)
     {
+        var exception = (ForbiddenAccessException)ex;
         httpContext.Response.StatusCode = StatusCodes.Status403Forbidden;
-        await httpContext.Response.WriteAsJsonAsync(ApiResponse<object>.Failure(new { Message = "Forbidden" }));
+        var message = string.IsNullOrEmpty(exception.Message) || exception.Message.Contains("Exception of type") ? "Forbidden" : exception.Message;
+
+        await httpContext.Response.WriteAsJsonAsync(ApiResponse<object>.Failure(new { Message = message, Code = exception.ErrorCode }));
+    }
+
+    private async Task HandleConflictException(HttpContext httpContext, Exception ex)
+    {
+        var exception = (ConflictException)ex;
+        httpContext.Response.StatusCode = StatusCodes.Status409Conflict;
+        var message = string.IsNullOrEmpty(exception.Message) ? "A conflict occurred." : exception.Message;
+
+        await httpContext.Response.WriteAsJsonAsync(ApiResponse<object>.Failure(new { Message = message, Code = exception.ErrorCode }));
     }
 
     private async Task HandleUnknownException(HttpContext httpContext, Exception ex)
     {
         httpContext.Response.StatusCode = StatusCodes.Status500InternalServerError;
-        await httpContext.Response.WriteAsJsonAsync(ApiResponse<object>.Failure(new { Message = "Internal Server Error", Detail = ex.Message }));
+        await httpContext.Response.WriteAsJsonAsync(ApiResponse<object>.Failure(new { Message = "Internal Server Error", Code = "INTERNAL_SERVER_ERROR", Detail = ex.Message }));
     }
 }

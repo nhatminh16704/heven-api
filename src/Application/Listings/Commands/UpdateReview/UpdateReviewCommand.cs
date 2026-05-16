@@ -2,6 +2,7 @@ using Heven.Api.Application.Common.Exceptions;
 using Heven.Api.Application.Common.Interfaces;
 using Heven.Api.Domain.Entities;
 using MediatR;
+using Heven.Api.Domain.Constants;
 
 namespace Heven.Api.Application.Listings.Commands.UpdateReview;
 
@@ -31,7 +32,7 @@ public class UpdateReviewCommandHandler : IRequestHandler<UpdateReviewCommand>
 
         if (review == null || review.ListingId != request.ListingId)
         {
-            throw new NotFoundException(nameof(Review), request.Id.ToString());
+            throw new NotFoundException("Review not found.", ErrorCodes.Review.NotFound);
         }
 
         if (review.AuthorId != _user.Id)

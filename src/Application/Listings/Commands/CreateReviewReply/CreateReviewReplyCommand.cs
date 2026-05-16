@@ -36,16 +36,24 @@ public class CreateReviewReplyCommandHandler : IRequestHandler<CreateReviewReply
 
         if (review == null)
         {
-            throw new NotFoundException(nameof(Review), request.ReviewId.ToString());
+            // SỬ DỤNG CONSTRUCTOR MỚI
+            throw new NotFoundException("Review not found.", ErrorCodes.Review.NotFound);
         }
 
         // 2. Chống hack thao tác: Đảm bảo User hiện tại đang đăng nhập PHẢI là chủ phòng của cái Listing đó
         if (review.Listing.HostId != _user.Id)
         {
-            throw new ForbiddenAccessException();
+            throw new ForbiddenAccessException("You do not have permission to reply to this review.", ErrorCodes.Review.Forbidden);
         }
 
-        // 3. Tiến hành tạo Review Reply
+        // 3. Kiểm tra xem đã reply chưa
+        var alreadyReplied = await _context.ReviewReplies.AnyAsync(r => r.ReviewId == request.ReviewId, cancellationToken);
+        if (alreadyReplied)
+        {
+            throw new ConflictException("You have already replied to this review.", ErrorCodes.Review.AlreadyReplied);
+        }
+
+        // 4. Tiến hành tạo Review Reply
         var reply = new ReviewReply
         {
             ReviewId = request.ReviewId,

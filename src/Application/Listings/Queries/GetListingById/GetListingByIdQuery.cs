@@ -2,8 +2,8 @@ using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using Heven.Api.Application.Common.Caching;
 using Heven.Api.Application.Common.Caching.Keys;
-using Heven.Api.Application.Common.Exceptions;
 using Heven.Api.Application.Common.Interfaces;
+using Heven.Api.Domain.Constants;
 using Heven.Api.Domain.Entities;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -39,7 +39,7 @@ public class GetListingByIdQueryHandler : IRequestHandler<GetListingByIdQuery, L
 
         if (listing == null)
         {
-            throw new NotFoundException(nameof(Listing), request.Id.ToString());
+            throw new NotFoundException($"Listing not found.", ErrorCodes.Listing.NotFound);
         }
 
         return listing;
