@@ -14,6 +14,7 @@ public class Booking : BaseAuditableEntity
     public decimal TotalPrice { get; set; }
     public BookingStatus Status { get; set; } = BookingStatus.Pending;
     public string? SpecialRequests { get; set; }
+    public string? TimeoutJobId { get; set; }
 
     // Navigation
     public Listing Listing { get; set; } = null!;

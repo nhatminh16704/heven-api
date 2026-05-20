@@ -4,6 +4,4 @@ public static class BookingCacheKeys
 {
     public static string Details(int id) => $"bookings:{id}";
     public static string ByUser(string userId) => $"bookings:user:{userId}";
-
-    public static string PaymentHold(int bookingId) => $"bookings:payment-hold:{bookingId}";
 }

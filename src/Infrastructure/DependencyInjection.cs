@@ -5,6 +5,7 @@ using Heven.Api.Infrastructure.Data;
 using Heven.Api.Infrastructure.Data.Interceptors;
 using Heven.Api.Infrastructure.Identity;
 using Heven.Api.Infrastructure.Services;
+using Heven.Api.Infrastructure.BackgroundServices;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
@@ -13,6 +14,7 @@ using RedLockNet.SERedis;
 using RedLockNet.SERedis.Configuration;
 using StackExchange.Redis;
 using Stripe; // Add this using directive for Stripe
+using Hangfire;
 
 namespace Microsoft.Extensions.DependencyInjection;
 
@@ -87,6 +89,19 @@ public static class DependencyInjection
 
         // Đăng ký IPaymentService
         services.AddTransient<IPaymentService, StripePaymentService>();
+
+        // Đăng ký Hangfire
+        services.AddHangfire(configuration => configuration
+            .SetDataCompatibilityLevel(CompatibilityLevel.Version_180)
+            .UseSimpleAssemblyNameTypeSerializer()
+            .UseRecommendedSerializerSettings()
+            .UseSqlServerStorage(connectionString));
+            
+        services.AddHangfireServer();
+
+        // Đăng ký Booking Job Service
+        services.AddScoped<IBookingJobService, BookingJobService>();
+        services.AddScoped<BookingJobProcessor>();
 
         return services;
     }

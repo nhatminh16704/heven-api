@@ -1,4 +1,5 @@
 using Heven.Api.Domain.Entities;
+using Heven.Api.Domain.Enums;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -12,7 +13,11 @@ public class ListingCalendarConfiguration : IEntityTypeConfiguration<ListingCale
 
         builder.Property(lc => lc.Status)
             .IsRequired()
-            .HasMaxLength(20);
+            .HasMaxLength(20)
+            .HasConversion(
+                v => v.ToString().ToLower(),
+                v => (ListingCalendarStatus)Enum.Parse(typeof(ListingCalendarStatus), v, true)
+            );
 
         builder.ToTable("ListingCalendars", t => t.HasCheckConstraint("CK_ListingCalendar_Status", "Status IN ('available', 'blocked', 'booked')"));
 

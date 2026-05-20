@@ -1,5 +1,5 @@
 using Heven.Api.Application.Common.Interfaces;
-using Heven.Api.Domain.Constants;
+using Heven.Api.Domain.Enums;
 using Heven.Api.Domain.Events;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -29,7 +29,7 @@ public class BookingCreatedEventHandler : INotificationHandler<BookingCreatedEve
 
         foreach (var row in calendarRows)
         {
-            row.Status = ListingCalendarStatuses.Booked;
+            row.Status = ListingCalendarStatus.Booked;
             row.Booking = notification.Booking;
         }
     }

@@ -1,7 +1,8 @@
-﻿using Heven.Api.Infrastructure.Data;
+using Heven.Api.Infrastructure.Data;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using System.Text.Json;
+using Hangfire;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -60,6 +61,8 @@ app.MapFallbackToFile("index.html");
 app.UseExceptionHandler(options => { });
 
 app.Map("/", () => Results.Redirect("/api"));
+
+app.UseHangfireDashboard("/hangfire");
 
 app.MapEndpoints();
 

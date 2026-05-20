@@ -1,4 +1,4 @@
-﻿using Heven.Api.Application.Common.Exceptions;
+using Heven.Api.Application.Common.Exceptions;
 using Heven.Api.Application.Common.Interfaces;
 using Heven.Api.Application.Common.Security;
 using Heven.Api.Domain.Constants;
@@ -27,19 +27,22 @@ public class CreateBookingCommandHandler : IRequestHandler<CreateBookingCommand,
     private readonly IMediator _mediator;
     private readonly IDistributedLockService _lockService;
     private readonly IIdentityService _identityService;
+    private readonly IBookingJobService _bookingJobService;
 
     public CreateBookingCommandHandler(
         IApplicationDbContext context,
         IUser user,
         IMediator mediator,
         IDistributedLockService lockService,
-        IIdentityService identityService)
+        IIdentityService identityService,
+        IBookingJobService bookingJobService)
     {
         _context = context;
         _user = user;
         _mediator = mediator;
         _lockService = lockService;
         _identityService = identityService;
+        _bookingJobService = bookingJobService;
     }
 
     public async Task<int> Handle(CreateBookingCommand request, CancellationToken cancellationToken)
@@ -103,7 +106,7 @@ public class CreateBookingCommandHandler : IRequestHandler<CreateBookingCommand,
             throw new ConflictException("One or more nights are not configured on the listing calendar.", ErrorCodes.Booking.DatesNotConfigured);
         }
 
-        if (calendarRows.Any(r => r.Status != ListingCalendarStatuses.Available))
+        if (calendarRows.Any(r => r.Status != ListingCalendarStatus.Available))
         {
             throw new ConflictException("Some selected dates are blocked or already booked.", ErrorCodes.Booking.DatesUnavailable);
         }
@@ -135,7 +138,10 @@ public class CreateBookingCommandHandler : IRequestHandler<CreateBookingCommand,
         
         await _context.SaveChangesAsync(cancellationToken);
 
-        await _mediator.Publish(new BookingPendingCreatedEvent(booking), cancellationToken);
+        // Schedule timeout job after saving to get the booking ID
+        var jobId = _bookingJobService.SchedulePaymentTimeout(booking.Id, TimeSpan.FromMinutes(10));
+        booking.TimeoutJobId = jobId;
+        await _context.SaveChangesAsync(cancellationToken);
 
         return booking.Id;
     }
