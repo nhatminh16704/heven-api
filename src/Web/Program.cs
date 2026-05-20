@@ -55,14 +55,13 @@ app.MapControllerRoute(
     pattern: "{controller}/{action=Index}/{id?}");
 
 app.MapRazorPages();
+app.MapHangfireDashboard("/hangfire");
 
 app.MapFallbackToFile("index.html");
 
 app.UseExceptionHandler(options => { });
 
 app.Map("/", () => Results.Redirect("/api"));
-
-app.UseHangfireDashboard("/hangfire");
 
 app.MapEndpoints();
 

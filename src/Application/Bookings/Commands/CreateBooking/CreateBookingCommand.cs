@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Heven.Api.Application.Bookings.Commands.CreateBooking;
 
-[Authorize]
+[Authorize(Roles = $"{Roles.Guest},{Roles.Host},{Roles.Administrator}")]
 public record CreateBookingCommand : IRequest<int>
 {
     public int ListingId { get; init; }
@@ -139,7 +139,7 @@ public class CreateBookingCommandHandler : IRequestHandler<CreateBookingCommand,
         await _context.SaveChangesAsync(cancellationToken);
 
         // Schedule timeout job after saving to get the booking ID
-        var jobId = _bookingJobService.SchedulePaymentTimeout(booking.Id, TimeSpan.FromMinutes(10));
+        var jobId = _bookingJobService.SchedulePaymentTimeout(booking.Id, TimeSpan.FromMinutes(1));
         booking.TimeoutJobId = jobId;
         await _context.SaveChangesAsync(cancellationToken);
 
