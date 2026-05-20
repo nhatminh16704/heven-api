@@ -1,4 +1,4 @@
-﻿using System.IO;
+using System.IO;
 using Heven.Api.Application.Bookings.Commands.ConfirmPayment;
 using Heven.Api.Web.Infrastructure;
 using MediatR;
@@ -45,7 +45,7 @@ public class Webhook : EndpointGroupBase
                 // 4. Lấy lại ClientReferenceId (Là BookingId)
                 if (session != null && int.TryParse(session.ClientReferenceId, out int bookingId))
                 {
-                    await sender.Send(new ConfirmPaymentCommand(bookingId));
+                    await sender.Send(new ConfirmPaymentCommand(bookingId, session.Id));
                 }
             }
 

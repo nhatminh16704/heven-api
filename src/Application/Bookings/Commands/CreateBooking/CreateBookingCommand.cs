@@ -139,7 +139,7 @@ public class CreateBookingCommandHandler : IRequestHandler<CreateBookingCommand,
         await _context.SaveChangesAsync(cancellationToken);
 
         // Schedule timeout job after saving to get the booking ID
-        var jobId = _bookingJobService.SchedulePaymentTimeout(booking.Id, TimeSpan.FromMinutes(1));
+        var jobId = _bookingJobService.SchedulePaymentTimeout(booking.Id, TimeSpan.FromMinutes(10));
         booking.TimeoutJobId = jobId;
         await _context.SaveChangesAsync(cancellationToken);
 

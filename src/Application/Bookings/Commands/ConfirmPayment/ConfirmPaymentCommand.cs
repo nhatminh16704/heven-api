@@ -5,7 +5,7 @@ using Heven.Api.Domain.Enums;
 
 namespace Heven.Api.Application.Bookings.Commands.ConfirmPayment;
 
-public record ConfirmPaymentCommand(int BookingId) : IRequest;
+public record ConfirmPaymentCommand(int BookingId, string TransactionId) : IRequest;
 
 public class ConfirmPaymentCommandHandler : IRequestHandler<ConfirmPaymentCommand>
 {
@@ -25,6 +25,18 @@ public class ConfirmPaymentCommandHandler : IRequestHandler<ConfirmPaymentComman
         Guard.Against.NotFound(request.BookingId, booking);
 
         booking.Status = BookingStatus.Confirmed; 
+        
+        var payment = new Heven.Api.Domain.Entities.Payment
+        {
+            BookingId = booking.Id,
+            Amount = booking.TotalPrice,
+            Method = "stripe",
+            Status = PaymentStatus.Completed,
+            TransactionId = request.TransactionId,
+            PaidAt = DateTimeOffset.UtcNow
+        };
+        
+        _context.Payments.Add(payment);
         
         if (!string.IsNullOrEmpty(booking.TimeoutJobId))
         {
