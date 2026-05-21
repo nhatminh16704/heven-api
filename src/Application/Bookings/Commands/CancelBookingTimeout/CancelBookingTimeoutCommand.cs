@@ -1,5 +1,6 @@
 using Heven.Api.Application.Common.Interfaces;
 using Heven.Api.Domain.Enums;
+using Heven.Api.Domain.Events;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -33,16 +34,7 @@ public class CancelBookingTimeoutCommandHandler : IRequestHandler<CancelBookingT
         if (booking.Status == BookingStatus.Pending)
         {
             booking.Status = BookingStatus.Cancelled;
-            
-            var calendars = await _context.ListingCalendars
-                .Where(c => c.BookingId == request.BookingId)
-                .ToListAsync(cancellationToken);
-
-            foreach (var calendar in calendars)
-            {
-                calendar.Status = ListingCalendarStatus.Available;
-                calendar.BookingId = null;
-            }
+            booking.AddDomainEvent(new BookingCancelledEvent(booking));
 
             await _context.SaveChangesAsync(cancellationToken);
             _logger.LogInformation("Booking {BookingId} has been cancelled by Hangfire due to payment timeout.", request.BookingId);

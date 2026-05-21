@@ -25,6 +25,7 @@ public static class ErrorCodes
     {
         private const string Prefix = "BOOKING";
 
+        public const string NotFound = $"{Prefix}.NOT_FOUND";
         public const string ListingLocked = $"{Prefix}.LISTING_LOCKED";
         public const string DatesNotConfigured = $"{Prefix}.DATES_NOT_CONFIGURED";
         public const string DatesUnavailable = $"{Prefix}.DATES_UNAVAILABLE";

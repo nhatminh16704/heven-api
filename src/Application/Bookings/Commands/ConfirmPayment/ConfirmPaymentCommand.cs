@@ -1,6 +1,7 @@
 using Ardalis.GuardClauses;
 using Heven.Api.Application.Common.Interfaces;
 using MediatR;
+using Heven.Api.Domain.Entities;
 using Heven.Api.Domain.Enums;
 
 namespace Heven.Api.Application.Bookings.Commands.ConfirmPayment;
@@ -28,7 +29,7 @@ public class ConfirmPaymentCommandHandler : IRequestHandler<ConfirmPaymentComman
 
         booking.Status = BookingStatus.Confirmed; 
         
-        var payment = new Heven.Api.Domain.Entities.Payment
+        var payment = new Payment
         {
             BookingId = booking.Id,
             Amount = booking.TotalPrice,
