@@ -24,6 +24,8 @@ public class ConfirmPaymentCommandHandler : IRequestHandler<ConfirmPaymentComman
 
         Guard.Against.NotFound(request.BookingId, booking);
 
+        if (booking.Status == BookingStatus.Confirmed) return;
+
         booking.Status = BookingStatus.Confirmed; 
         
         var payment = new Heven.Api.Domain.Entities.Payment
